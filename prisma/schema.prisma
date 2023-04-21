@@ -1,0 +1,145 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Project {
+  id String @id @default(uuid())
+
+  name String
+
+  description String?
+
+  creatorEmail String
+
+  createdAt DateTime @default(now())
+
+  updatedAt DateTime @updatedAt
+
+  members   Member[]
+  entity    Entity[]
+  generator Generator[]
+
+  @@index([creatorEmail])
+}
+
+model Entity {
+  id String @id @default(uuid())
+
+  name String
+
+  columns Column[]
+
+  creatorEmail String
+
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectId String
+
+  createdAt DateTime @default(now())
+
+  updatedAt DateTime @updatedAt
+
+  @@index([creatorEmail, projectId])
+}
+
+model Column {
+  id String @id @default(uuid())
+
+  name String
+
+  type String
+
+  entity   Entity? @relation(fields: [entityId], references: [id], onDelete: Cascade)
+  entityId String?
+
+  constraint Constraint[]
+
+  creatorEmail String
+
+  createdAt DateTime @default(now())
+
+  updatedAt DateTime @updatedAt
+
+  @@index([creatorEmail, entityId])
+}
+
+model Constraint {
+  id String @id @default(uuid())
+
+  name String
+
+  type String
+
+  value    String
+  Column   Column? @relation(fields: [columnId], references: [id], onDelete: Cascade)
+  columnId String?
+
+  creatorEmail String
+
+  createdAt DateTime @default(now())
+
+  updatedAt DateTime @updatedAt
+
+  @@index([creatorEmail, columnId])
+}
+
+model Generator {
+  id String @id @default(uuid())
+
+  name String
+
+  creatorEmail String
+
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectId String
+
+  createdAt DateTime @default(now())
+
+  updatedAt DateTime @updatedAt
+
+  template Template?
+
+  @@index([creatorEmail])
+}
+
+model Template {
+  id String @id @default(uuid())
+
+  body String
+
+  generator   Generator @relation(fields: [generatorId], references: [id], onDelete: Cascade)
+  generatorId String    @unique
+
+  createdAt DateTime @default(now())
+
+  updatedAt DateTime @updatedAt
+}
+
+model Member {
+  id String @id @default(uuid())
+
+  role String
+
+  status String
+
+  createdAt DateTime @default(now())
+
+  updatedAt DateTime @updatedAt
+
+  inviterEmail String?
+
+  inviteeEmail String?
+
+  project   Project? @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectId String?
+
+  @@unique([inviteeEmail, projectId])
+  @@index([inviteeEmail])
+}
