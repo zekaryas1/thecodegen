@@ -21,7 +21,7 @@ const Projects: NextPageWithLayout = () => {
   const {
     data: projects,
     isLoading,
-    mutate,
+    mutate: refreshProjects,
   } = useSWR(ProjectService.getBaseUrl());
   const { data: session } = useSession();
   const router = useRouter();
@@ -44,18 +44,18 @@ const Projects: NextPageWithLayout = () => {
   const manageProject = async (project: Project) => {
     if (project.id) {
       await ProjectService.update(project).then((res) => res.data);
-      mutate();
+      refreshProjects();
     } else {
       const response = await ProjectService.create(project).then(
         (res) => res.data
       );
-      mutate({ ...projects, response });
+      refreshProjects({ ...projects, response });
     }
   };
 
   const deleteProject = async (id: string) => {
     await ProjectService.delete(id);
-    mutate({ ...projects.data.filter((it: Project) => it.id !== id) });
+    refreshProjects({ ...projects.data.filter((it: Project) => it.id !== id) });
   };
 
   const onDialogClose = () => {

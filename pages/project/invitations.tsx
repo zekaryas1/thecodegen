@@ -20,7 +20,7 @@ function ProjectInvitations() {
   const {
     data: invitations,
     isLoading,
-    mutate,
+    mutate: refreshInvitations,
   } = useSWR(InvitationService.getBaseUrl());
   const { data: session } = useSession();
   const [filters, setFilters] = useFilters();
@@ -30,7 +30,7 @@ function ProjectInvitations() {
       ...member,
       status: MemberStatus.ACCEPTED,
     });
-    mutate();
+    refreshInvitations();
   };
 
   const rejectInvitation = async (member: Member) => {
@@ -38,7 +38,7 @@ function ProjectInvitations() {
       ...member,
       status: MemberStatus.REJECTED,
     });
-    mutate();
+    refreshInvitations();
   };
 
   const actionBody = (data: Member) => {

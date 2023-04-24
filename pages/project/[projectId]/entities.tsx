@@ -20,7 +20,7 @@ function Entities() {
   const {
     data: entities,
     isLoading,
-    mutate,
+    mutate: refreshEntities,
   } = useSWR(EntityService.getBaseUrl(projectId as string));
 
   const [selectedEntity, setSelectedEntity] = useState<Entity>({});
@@ -43,29 +43,29 @@ function Entities() {
   const manageEntity = async (entity: Entity) => {
     if (entity.id) {
       await EntityService.update(entity, projectId).then((res) => res.data);
-      mutate();
+      refreshEntities();
     } else {
       const { data: response } = await EntityService.create(
         entity,
         projectId as string
       ).then((res) => res.data);
-      mutate({ ...entities, response });
+      refreshEntities({ ...entities, response });
     }
   };
 
   const deleteEntity = async (id: string) => {
     await EntityService.delete(id, projectId);
-    mutate({ ...entities.data.filter((it: Entity) => it.id !== id) });
+    refreshEntities({ ...entities.data.filter((it: Entity) => it.id !== id) });
   };
 
   const deleteColumn = async (columnId: string) => {
     await ColumnService.delete(columnId, projectId);
-    mutate();
+    refreshEntities();
   };
 
   const addNewColumn = async (data: Column) => {
     await ColumnService.create(data, projectId);
-    mutate();
+    refreshEntities();
   };
 
   if (isLoading) {

@@ -26,7 +26,7 @@ function Members() {
   const {
     data: members,
     isLoading,
-    mutate,
+    mutate: refreshMembers,
   } = useSWR(MemberService.getBaseUrl(projectId));
   const { data: session } = useSession();
   const [filters, setFilters] = useFilters();
@@ -38,12 +38,12 @@ function Members() {
       },
       projectId
     );
-    mutate({ ...members, response });
+    refreshMembers({ ...members, response });
   };
 
   const deleteMember = async (id: string) => {
     await MemberService.delete(id, projectId);
-    mutate({ ...members.data.filter((it: Member) => it.id !== id) });
+    refreshMembers({ ...members.data.filter((it: Member) => it.id !== id) });
   };
 
   const actionBody = (data: Member) => {
@@ -55,7 +55,7 @@ function Members() {
         },
         projectId
       );
-      mutate();
+      refreshMembers();
     };
 
     /**
