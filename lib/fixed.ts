@@ -15,16 +15,29 @@ export const DATA_TYPES = [
 ];
 
 // language=txt
-export const DEFAULT_TEMPLATE = `<!-- you can start coding now -->
-<!-- visit https://shopify.github.io/liquid/ to get started -->
+export const DEFAULT_TEMPLATE = `[//]: # "markdown"
 
-{{ name | upcase }}
+## How to start
+- First select and an entity from the dropdown above
+    - then click \`Regenerate\` button
+- To write a markdown start your template with
+    - \`[//]: # "markdown"\` just like this template
+- To write a template code
+    - you have to follow [liquid syntax](https://shopify.github.io/liquid/)
+    - here is an output of template code example
+
+\`\`\`
+Entity = {{ name | upcase }}
 
 {%- for column in columns %}
     columnName = {{ column.name }}
     no of constraints = {{ column.constraint.size }}
     ----
 {% endfor %}
+\`\`\`
+*if you see an empty code block it means you haven't selected an entity*
+
+> btw, you can also write markdown and templates together(wip)
 `;
 
 export const TABLE_CLASSNAMES =
@@ -95,5 +108,7 @@ export const DESTINATIONS = {
   ],
 };
 
-
 export const PROJECT_NAME = "Codegen";
+
+
+export const MARKDOWN_INDICATOR = '[//]: # "markdown"';
