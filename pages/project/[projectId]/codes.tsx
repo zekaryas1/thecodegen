@@ -29,7 +29,7 @@ function Codes() {
   const {
     data: generators,
     isLoading,
-    mutate,
+    mutate: refreshGenerators,
   } = useSWR(GeneratorService.getBaseUrl(projectId));
   const { data: entities } = useSWR(EntityService.getBaseUrl(projectId));
 
@@ -40,67 +40,59 @@ function Codes() {
 
   const [dialogData, setDialogData] = useState<Generator>({});
 
-  // const [template, setTemplate] = useState("");
   const [generatedCode, setGeneratedCode] = useState("");
   const [showMarkDown, setShowMarkDown] = useState(false);
 
   const toast = useRef(null);
 
-  // useEffect(() => {
-  //   setSelectedGenerator((prevState) => {
-  //     return {
-  //       ...prevState,
-  //       template: {
-  //         ...prevState.template,
-  //         body: template,
-  //       },
-  //     };
-  //   });
-  // }, [template]);
-
-  const saveNewGenerator = useCallback(
-    async (newGenerator: Generator) => {
-      if (newGenerator.id) {
-        await GeneratorService.update(newGenerator, projectId);
-        mutate();
-      } else {
-        const response = await GeneratorService.create(
-          newGenerator,
-          projectId
-        ).then((res) => res.data);
-        mutate({ ...generators, response });
-      }
-    },
-    [generators, mutate, projectId]
-  );
-
-  const updateTemplate = useCallback(
-    async (newTemplate: Template) => {
-      const res = await TemplateService.update(
-        {
-          ...newTemplate,
-          body: selectedGenerator?.template?.body || "",
-        },
-        projectId
+  useEffect(() => {
+    setSelectedGenerator((prevState) => {
+      const res = generators?.data?.find(
+        (generator: Generator) => generator.id === prevState.id
       );
+      return res || {};
+    });
+  }, [generators?.data]);
 
-      if (res.statusText == "OK") {
-        show({
-          severity: "success",
-          summary: "Template saved",
-          detail: "",
-        });
-        mutate();
-      } else {
-        show({
-          severity: "error",
-          summary: "Template can not be saved",
-          detail: "Something went wrong",
-        });
-      }
-    },
-    [mutate, projectId, selectedGenerator?.template?.body]
-  );
+  const saveNewGenerator = async (newGenerator: Generator) => {
+    if (newGenerator.id) {
+      await GeneratorService.update(newGenerator, projectId);
+      refreshGenerators();
+    } else {
+      const response = await GeneratorService.create(
+        newGenerator,
+        projectId
+      ).then((res) => res.data);
+      refreshGenerators({ ...generators, response });
+    }
+  };
+
+  /**
+   * Updates a template and displays a success message if successful
+   * @param {Template} newTemplate - The new template to update
+   */
+  const updateTemplate = async (newTemplate: Template) => {
+    const updatedTemplate = {
+      ...newTemplate,
+      body: selectedGenerator?.template?.body || "",
+    };
+    const res = await TemplateService.update(updatedTemplate, projectId);
+
+    if (res.statusText === "OK") {
+      show({
+        severity: "success",
+        summary: "Template saved",
+        detail: "",
+      });
+      refreshGenerators();
+    } else {
+      show({
+        severity: "error",
+        summary: "Template can not be saved",
+        detail: "Something went wrong",
+      });
+    }
+  };
 
   const show = (message: {
     severity: "success" | "error";
@@ -111,34 +103,20 @@ function Codes() {
     toast.current.show(message);
   };
 
-  const deleteGenerator = useCallback(
-    async (id: string) => {
-      const response = await GeneratorService.delete(id, projectId);
-      if (response.statusText == "OK") {
-        setSelectedGenerator({});
-        mutate({ ...generators.data.filter((it: Generator) => it.id != id) });
-      }
-    },
-    [generators, mutate, projectId]
-  );
+  const deleteGenerator = async (id: string) => {
+    const response = await GeneratorService.delete(id, projectId);
+    if (response.statusText == "OK") {
+      setSelectedGenerator({});
+      refreshGenerators({
+        ...generators.data.filter((it: Generator) => it.id != id),
+      });
+    }
+  };
 
   const openGeneratorDialogWith = (generator: Generator) => {
     setDialogData(generator);
     setShowManageGeneratorDialog(true);
   };
-
-  const openGeneratorForNew = useCallback(
-    () => openGeneratorDialogWith({}),
-    []
-  );
-  const openGeneratorForUpdate = useCallback(
-    () => openGeneratorDialogWith(selectedGenerator),
-    [selectedGenerator]
-  );
-  const hideManageGeneratorDialog = useCallback(
-    () => setShowManageGeneratorDialog(false),
-    []
-  );
 
   const regenerateResult = async (template: string, entity: Entity) => {
     if (template) {
@@ -154,10 +132,6 @@ function Codes() {
     }
     return "";
   };
-
-  if (isLoading) {
-    return <LoadingIndicator />;
-  }
 
   const codeBlockToShow = () => {
     const editor = (
@@ -182,23 +156,27 @@ function Codes() {
   const onRegenerateButtonClick = async () => {
     const template = selectedGenerator.template?.body || "";
     const generatedCode = await regenerateResult(template, selectedEntity);
-  
+
     if (generatedCode && generatedCode.startsWith(MARKDOWN_INDICATOR)) {
       setShowMarkDown(true);
     } else {
       setShowMarkDown(false);
     }
-  
+
     setGeneratedCode(generatedCode);
   };
+
+  if (isLoading) {
+    return <LoadingIndicator />;
+  }
 
   return (
     <>
       <CodesToolBar
         currentEntity={selectedEntity}
         currentGenerator={selectedGenerator}
-        addClick={openGeneratorForNew}
-        manageClick={openGeneratorForUpdate}
+        addClick={() => openGeneratorDialogWith({})}
+        manageClick={() => openGeneratorDialogWith(selectedGenerator)}
         updateCurrentEntity={setSelectedEntity}
         updateTemplate={() => {
           selectedGenerator.template &&
@@ -247,7 +225,7 @@ function Codes() {
           data={dialogData}
           onDelete={deleteGenerator}
           onSubmit={saveNewGenerator}
-          onClose={hideManageGeneratorDialog}
+          onClose={() => setShowManageGeneratorDialog(false)}
           show={showManageGeneratorDialog}
         />
       )}
