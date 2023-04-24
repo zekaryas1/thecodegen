@@ -68,7 +68,7 @@ function Codes() {
   };
 
   /**
-   * Updates a template and displays a success message if successful
+   * Call api to Updates a template and displays a success message if successful
    * @param {Template} newTemplate - The new template to update
    */
   const updateTemplate = async (newTemplate: Template) => {
@@ -92,6 +92,23 @@ function Codes() {
         detail: "Something went wrong",
       });
     }
+  };
+
+  /**
+   * Updates the generator template by setting the body to the provided value.
+   *
+   * @param {string | undefined} newValue - The new value for the template body.
+   * @return {void} This function does not return anything.
+   */
+
+  const updateGeneratorTemplate = (newValue: string | undefined) => {
+    setSelectedGenerator((prevState) => ({
+      ...prevState,
+      template: {
+        ...prevState.template,
+        body: newValue || "",
+      },
+    }));
   };
 
   const show = (message: {
@@ -203,17 +220,7 @@ function Codes() {
               height="100%"
               defaultLanguage="liquid"
               defaultValue={selectedGenerator.template?.body || ""}
-              onChange={(value) => {
-                setSelectedGenerator((prevState) => {
-                  return {
-                    ...prevState,
-                    template: {
-                      ...prevState.template,
-                      body: value,
-                    },
-                  };
-                });
-              }}
+              onChange={updateGeneratorTemplate}
             />
           </SplitterPanel>
           <SplitterPanel>{codeBlockToShow()}</SplitterPanel>
