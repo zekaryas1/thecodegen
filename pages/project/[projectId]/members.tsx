@@ -65,9 +65,9 @@ function Members() {
      */
 
     const removeMemberButton = () => {
-      const buttonToShow = (
+      const buttonToShow = (label: string) => (
         <Button
-          label="Remove"
+          label={label}
           className="p-button-sm p-button-danger p-button-text"
           onClick={(event) => {
             myConfirmPopUp({
@@ -89,9 +89,9 @@ function Members() {
         data.role !== UserRole.OWNER &&
         data.inviteeEmail === session?.user?.email
       ) {
-        return buttonToShow;
+        return buttonToShow("Leave project");
       } else if (data.role !== UserRole.OWNER) {
-        return <AdminOrOwner>{buttonToShow}</AdminOrOwner>;
+        return <AdminOrOwner>{buttonToShow("Remove user")}</AdminOrOwner>;
       }
       return null;
     };
