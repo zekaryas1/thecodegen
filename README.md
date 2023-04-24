@@ -11,7 +11,7 @@
     - [How to build the project for production](#how-to-build-the-project-for-production)
     - [How to run the project locally](#how-to-run-the-project-locally)
   - [Prisma Commands to remember](#prisma-commands-to-remember)
-    - [Prisma migration commands](#prisma-migration-commands)
+    - [Note on Prisma migration commands](#note-on-prisma-migration-commands)
 
 ## About
 - TL:DR 
@@ -49,7 +49,7 @@ NEXTAUTH_SECRET=${random base64 value i.e openssl rand -base64 32}
 
 - if you don't want to use postgresql, you can change the database to any other databases prisma supports
   - [For example: you can see here how to use sqlite](https://www.prisma.io/docs/concepts/database-connectors/sqlite)
-- optionally, when working locally you can use the docker-compose to spin up postgres database
+- optionally, when working locally you can use [the docker-compose](docker-compose.yml) to spin up postgres database
 
 ```shell
 docker-compose up -d
@@ -98,7 +98,7 @@ npx prisma migrate dev --name migration_name
 prisma format
 ```
 
-### Prisma migration commands
+### Note on Prisma migration commands
 
 - When developing locally
   - to sync your Prisma schema with the database schema of your local development database
