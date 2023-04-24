@@ -33,7 +33,7 @@ const EntityListComponent = ({
       <ListBox
         filter
         filterPlaceholder="Search entities..."
-        className="h-screen overflow-hidden"
+        className="h-full overflow-hidden"
         style={{
           borderRadius: "0px",
           borderRight: "0px",

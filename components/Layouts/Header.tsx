@@ -37,9 +37,13 @@ function Header({
     );
   };
 
+  const onSelectButtonChange = (e: { value: { label: string } }) => {
+    onDestionationsClick && e.value && onDestionationsClick(e.value.label);
+  };
+
   return (
     <>
-      <div className="px-4 pt-4 mr-3 flex justify-content-between align-items-end">
+      <div className="px-4 pt-4 flex justify-content-between align-items-end">
         <div>
           <h2
             className="mb-1 cursor-pointer text-primary"
@@ -52,16 +56,12 @@ function Header({
         <SelectButton
           value={currentDestination}
           dataKey="label"
-          onChange={(e) => {
-            onDestionationsClick &&
-              e.value &&
-              onDestionationsClick(e.value.label);
-          }}
+          onChange={onSelectButtonChange}
           itemTemplate={destinationsTemplate}
           options={listOfDestinations || []}
         />
       </div>
-      <Divider className="w-8 m-auto mt-3 mb-3" />
+      <Divider className="w-8 m-auto my-3" />
     </>
   );
 }

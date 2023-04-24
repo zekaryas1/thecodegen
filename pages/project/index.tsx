@@ -75,7 +75,7 @@ const Projects: NextPageWithLayout = () => {
   return (
     <>
       <div className="p-4 h-screen">
-        <div className="flex justify-content-between mr-3">
+        <div className="flex justify-content-between">
           <span className="p-buttonset">
             <Button
               label="Recent"

@@ -93,7 +93,7 @@ function Entities() {
         <Divider />
       </AdminOrOwner>
 
-      <div className="grid h-full">
+      <div className="grid min-h-screen mb-4">
         <div className="col-2 pr-0">
           <EntityListComponent
             currentEntity={selectedEntity}
@@ -104,7 +104,7 @@ function Entities() {
 
         <div className="col pl-0">
           <MyEditor
-            height="100vh"
+            height="100%"
             defaultLanguage="json"
             defaultValue={entityToString(selectedEntity)}
           />

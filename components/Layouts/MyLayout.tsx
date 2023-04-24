@@ -46,24 +46,20 @@ export default function MyLayout({ children }: Props) {
   };
 
   return (
-    <div className="h-screen flex">
-      <div className="flex flex-column w-full">
-        <Header
-          onTitleClick={() => {
-            router.push("/project");
-          }}
-          onDestionationsClick={(destination: string) => {
-            router.push(`/project/${projectId}/${destination}`);
-          }}
-          listOfDestinations={DESTINATIONS.fromDashboard}
-          currentDestination={currentPath || DESTINATIONS.fromDashboard[0]}
-          title={projectName().name}
-          subTitle={projectName().description}
-        />
-        <div className="flex-grow-1 pl-4 pr-4 overflow-y-scroll">
-          {children}
-        </div>
-      </div>
+    <div className="flex flex-column w-full">
+      <Header
+        onTitleClick={() => {
+          router.push("/project");
+        }}
+        onDestionationsClick={(destination: string) => {
+          router.push(`/project/${projectId}/${destination}`);
+        }}
+        listOfDestinations={DESTINATIONS.fromDashboard}
+        currentDestination={currentPath || DESTINATIONS.fromDashboard[0]}
+        title={projectName().name}
+        subTitle={projectName().description}
+      />
+      <div className="flex-grow-1 pl-4 pr-4">{children}</div>
     </div>
   );
 }
