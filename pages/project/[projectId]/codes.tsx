@@ -16,6 +16,11 @@ import MyEditor from "../../../components/MyEditor";
 import { engine } from "../../../lib/engine";
 import CodesToolBar from "../../../components/Codes/CodesToolBar";
 import { Divider } from "primereact/divider";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+import "github-markdown-css";
+import Conditional from "../../../components/Conditional";
+import { MARKDOWN_INDICATOR } from "../../../lib/fixed";
 
 function Codes() {
   const router = useRouter();
@@ -35,22 +40,23 @@ function Codes() {
 
   const [dialogData, setDialogData] = useState<Generator>({});
 
-  const [template, setTemplate] = useState("");
+  // const [template, setTemplate] = useState("");
   const [generatedCode, setGeneratedCode] = useState("");
+  const [showMarkDown, setShowMarkDown] = useState(false);
 
   const toast = useRef(null);
 
-  useEffect(() => {
-    setSelectedGenerator((prevState) => {
-      return {
-        ...prevState,
-        template: {
-          ...prevState.template,
-          body: template,
-        },
-      };
-    });
-  }, [template]);
+  // useEffect(() => {
+  //   setSelectedGenerator((prevState) => {
+  //     return {
+  //       ...prevState,
+  //       template: {
+  //         ...prevState.template,
+  //         body: template,
+  //       },
+  //     };
+  //   });
+  // }, [template]);
 
   const saveNewGenerator = useCallback(
     async (newGenerator: Generator) => {
@@ -73,7 +79,7 @@ function Codes() {
       const res = await TemplateService.update(
         {
           ...newTemplate,
-          body: template,
+          body: selectedGenerator?.template?.body || "",
         },
         projectId
       );
@@ -93,7 +99,7 @@ function Codes() {
         });
       }
     },
-    [mutate, projectId, template]
+    [mutate, projectId, selectedGenerator?.template?.body]
   );
 
   const show = (message: {
@@ -134,22 +140,57 @@ function Codes() {
     []
   );
 
-  const regenerateResult = (template: string, entity: Entity) => {
+  const regenerateResult = async (template: string, entity: Entity) => {
     if (template) {
-      engine
+      const result = await engine
         .parseAndRender(template, {
           name: entity.name,
           columns: entity.columns,
         })
-        .then((value) => {
-          setGeneratedCode(value);
+        .catch((err) => {
+          console.log(err);
         });
+      return result;
     }
+    return "";
   };
 
   if (isLoading) {
     return <LoadingIndicator />;
   }
+
+  const codeBlockToShow = () => {
+    const editor = (
+      <MyEditor
+        height="100%"
+        defaultLanguage={selectedGenerator.name?.split(".")[1] || "liquid"}
+        defaultValue={generatedCode}
+      />
+    );
+    const markDown = (
+      <ReactMarkdown
+        remarkPlugins={[[remarkGfm, { singleTilde: false }]]}
+        className="markdown-body bg-transparent h-full px-3 py-4 border-gray-400 border-1"
+      >
+        {generatedCode}
+      </ReactMarkdown>
+    );
+
+    return <Conditional if={showMarkDown} show={markDown} else={editor} />;
+  };
+
+  const onRegenerateButtonClick = async () => {
+    const template = selectedGenerator.template?.body || "";
+    const generatedCode = await regenerateResult(template, selectedEntity);
+  
+    if (generatedCode && generatedCode.startsWith(MARKDOWN_INDICATOR)) {
+      setShowMarkDown(true);
+    } else {
+      setShowMarkDown(false);
+    }
+  
+    setGeneratedCode(generatedCode);
+  };
 
   return (
     <>
@@ -163,12 +204,12 @@ function Codes() {
           selectedGenerator.template &&
             updateTemplate(selectedGenerator.template);
         }}
-        regenerateResult={() => regenerateResult(template, selectedEntity)}
+        regenerateResult={onRegenerateButtonClick}
         listOfEntities={entities?.data || []}
       />
       <Divider />
 
-      <div className="grid h-screen p-2 mb-4">
+      <div className="grid min-h-screen p-2 mb-4">
         <Toast ref={toast} />
         <div className="col-2 p-0">
           <GeneratorListComponent
@@ -181,23 +222,23 @@ function Codes() {
         <Splitter className="col p-0 m-0 border-none">
           <SplitterPanel>
             <MyEditor
-              height="100vh"
+              height="100%"
               defaultLanguage="liquid"
               defaultValue={selectedGenerator.template?.body || ""}
               onChange={(value) => {
-                setTemplate(value || "");
+                setSelectedGenerator((prevState) => {
+                  return {
+                    ...prevState,
+                    template: {
+                      ...prevState.template,
+                      body: value,
+                    },
+                  };
+                });
               }}
             />
           </SplitterPanel>
-          <SplitterPanel>
-            <MyEditor
-              height="100vh"
-              defaultLanguage={
-                selectedGenerator.name?.split(".")[1] || "liquid"
-              }
-              defaultValue={generatedCode}
-            />
-          </SplitterPanel>
+          <SplitterPanel>{codeBlockToShow()}</SplitterPanel>
         </Splitter>
       </div>
 
