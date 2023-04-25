@@ -107,7 +107,7 @@ const Projects: NextPageWithLayout = () => {
             />
           }
           else={
-            <div className="mt-4 mr-3">
+            <div className="mt-4">
               <TableView
                 isLoading={isLoading}
                 loggedInUserEmail={session?.user?.email || ""}
