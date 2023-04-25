@@ -55,6 +55,7 @@ function EntitiesToolBar({
         else={
           <Button
             className="p-button-sm p-button-outlined p-button-info"
+            tooltipOptions={{ position: "bottom" }}
             tooltip="Start by selecting an entity"
             label="Select an entity to start"
           />

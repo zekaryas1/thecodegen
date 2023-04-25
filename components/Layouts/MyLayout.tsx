@@ -46,7 +46,9 @@ export default function MyLayout({ children }: Props) {
   };
 
   return (
-    <div className="flex flex-column w-full">
+    <div
+      className="flex flex-column w-full min-h-screen"
+    >
       <Header
         onTitleClick={() => {
           router.push("/project");

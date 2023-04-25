@@ -6,7 +6,7 @@ import { ConfirmPopup } from "primereact/confirmpopup";
 import { myConfirmPopUp } from "../MyConfirmPopup";
 import { Generator } from "../../lib/models/Generator";
 import { DialogProps } from "../../lib/models/InterfaceProps";
-import { DIALOG_PROPS, DIALOG_STYLES } from "../../lib/fixed";
+import { DIALOG_PROPS } from "../../lib/fixed";
 
 function ManageGeneratorDialog({
   onClose,

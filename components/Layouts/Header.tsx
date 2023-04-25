@@ -2,6 +2,7 @@ import { Button } from "primereact/button";
 import { useSession } from "next-auth/react";
 import { Divider } from "primereact/divider";
 import { SelectButton } from "primereact/selectbutton";
+import { GLOBAL_STYLES } from "../../lib/fixed";
 
 export interface DestinationType {
   label: string;
@@ -42,7 +43,7 @@ function Header({
   };
 
   return (
-    <>
+    <div style={GLOBAL_STYLES.forHeaderPattern}>
       <div className="px-4 pt-4 flex justify-content-between align-items-end">
         <div>
           <h2
@@ -62,7 +63,7 @@ function Header({
         />
       </div>
       <Divider className="w-8 m-auto my-3" />
-    </>
+    </div>
   );
 }
 

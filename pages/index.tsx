@@ -4,7 +4,7 @@ import { Divider } from "primereact/divider";
 import Link from "next/link";
 import Image from "next/image";
 import { title } from "process";
-import { DESTINATIONS, PROJECT_NAME } from "../lib/fixed";
+import { DESTINATIONS, GLOBAL_STYLES, PROJECT_NAME } from "../lib/fixed";
 import Head from "next/head";
 import { useSession } from "next-auth/react";
 import Conditional from "../components/Conditional";
@@ -13,20 +13,10 @@ function Home() {
   const { data: session } = useSession();
 
   const heroSection = () => {
-    const backgroundStyle = {
-      background: `radial-gradient(35.36% 35.36% at 100% 25%,#0000 66%,#0c0b0b 68% 70%,#0000 72%) 32px 32px/calc(2*32px) calc(2*32px),
-    radial-gradient(35.36% 35.36% at 0    75%,#0000 66%,#0c0b0b 68% 70%,#0000 72%) 32px 32px/calc(2*32px) calc(2*32px),
-    radial-gradient(35.36% 35.36% at 100% 25%,#0000 66%,#0c0b0b 68% 70%,#0000 72%) 0 0/calc(2*32px) calc(2*32px),
-    radial-gradient(35.36% 35.36% at 0    75%,#0000 66%,#0c0b0b 68% 70%,#0000 72%) 0 0/calc(2*32px) calc(2*32px),
-    repeating-conic-gradient(rgba(18, 18, 18, 0) 0 25%,#0000 0 50%) 0 0/calc(2*32px) calc(2*32px),
-    radial-gradient(#0000 66%,#0c0b0b 68% 70%,#0000 72%) 0 calc(32px/2)/32px 32px
-    rgba(18, 18, 18, 0)`,
-    };
-
     return (
       <div
         className="p-2 py-6 flex justify-content-center align-items-center lg:gap-4"
-        style={backgroundStyle}
+        style={GLOBAL_STYLES.forHeaderPattern}
       >
         <div className="w-10 md:w-8 lg:w-4 flex flex-column align-items-center lg:align-items-start">
           <h2 className="mb-2" id="about">

@@ -22,12 +22,11 @@ function CardView({
    * @param {Project} project - The project object to be displayed.
    */
   const card = (project: Project) => {
-
     const getFromUI = (from: string): JSX.Element => {
       return (
         <h5
           className="absolute"
-          style={{ bottom: "20px", left: "20px", zIndex: 30 }}
+          style={{ bottom: "20px", left: "10px", zIndex: 30 }}
         >
           from {from}
         </h5>
@@ -52,7 +51,7 @@ function CardView({
           <div>
             <h1
               className="absolute w-15rem white-space-nowrap overflow-hidden text-overflow-ellipsis"
-              style={{ top: "20px", left: "20px", zIndex: 30 }}
+              style={{ top: "20px", left: "10px", zIndex: 30 }}
             >
               {project.name}
             </h1>
@@ -70,11 +69,14 @@ function CardView({
           />
         </div>
 
-        <h5 className="px-3 pt-3 text-gray-400 line-height-3 max-h-3rem overflow-hidden">
+        <h5
+          title={project.description}
+          className="p-2 pt-3 text-gray-400 white-space-nowrap overflow-hidden text-overflow-ellipsis"
+        >
           {project.description}
         </h5>
-        <Divider className="my-2" />
-        <h6 className="px-3 py-2">
+        <Divider className="m-0 mb-2" />
+        <h6 className="p-2">
           Created - {project.createdAt && <TimeAgo date={project.createdAt} />}
         </h6>
       </div>
@@ -98,7 +100,6 @@ function CardView({
       <div className="flex flex-wrap gap-4 mt-4">
         {projects.map((project: Project) => card(project))}
       </div>
-      <Divider />
     </>
   );
 }

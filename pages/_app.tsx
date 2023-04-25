@@ -12,8 +12,9 @@ import { SessionProvider } from "next-auth/react";
 import MyLayout from "../components/Layouts/MyLayout";
 import { Toast } from "primereact/toast";
 import localFont from "@next/font/local";
-import { PROJECT_NAME } from "../lib/fixed";
-import Head from "next/head";
+import MyHead from "../components/MyHead";
+import Footer from "../components/Layouts/Footer";
+import { GLOBAL_STYLES } from "../lib/fixed";
 
 const myFont = localFont({ src: "./fonts/Dank Mono Regular.otf" });
 
@@ -31,18 +32,10 @@ export default function App({
   pageProps: { session, ...pageProps },
 }: AppPropsWithLayout) {
   const toast = useRef(null);
+
   const ComponentToUse = (
     <>
-      <Head>
-        <title>{PROJECT_NAME}</title>
-        <meta property="og:title" content={PROJECT_NAME} key="title" />
-        <meta property="og:author" content="https://github.com/zekaryas1" />
-        <meta
-          property="og:description"
-          content="A template based code-generator that helps you automate your custom code generation."
-          key="description"
-        />
-      </Head>
+      <MyHead />
       <Toast ref={toast} style={{ zIndex: 1000 }} />
       <Component {...pageProps} />
     </>
@@ -65,23 +58,19 @@ export default function App({
     fetcher: (url: string) => axios.get(url).then((res) => res.data),
   };
 
-  if (Component.getLayout) {
-    return (
-      <SessionProvider session={session}>
-        <SWRConfig value={SWROption}>
-          <main className={myFont.className}>
-            {Component.getLayout(ComponentToUse)}
-          </main>
-        </SWRConfig>
-      </SessionProvider>
-    );
-  }
-
   return (
     <SessionProvider session={session}>
       <SWRConfig value={SWROption}>
-        <main className={myFont.className}>
-          <MyLayout>{ComponentToUse}</MyLayout>
+        <main
+          className={myFont.className}
+          style={GLOBAL_STYLES.forLinearGradient}
+        >
+          {Component.getLayout ? (
+            Component.getLayout(ComponentToUse)
+          ) : (
+            <MyLayout>{ComponentToUse}</MyLayout>
+          )}
+          <Footer />
         </main>
       </SWRConfig>
     </SessionProvider>

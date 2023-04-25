@@ -6,7 +6,7 @@ import { ConfirmPopup } from "primereact/confirmpopup";
 import { DialogProps } from "../../lib/models/InterfaceProps";
 import { Project } from "../../lib/models/Project";
 import { myConfirmPopUp } from "../MyConfirmPopup";
-import { DIALOG_PROPS, DIALOG_STYLES } from "../../lib/fixed";
+import { DIALOG_PROPS } from "../../lib/fixed";
 
 function ManageProjectDialog({
   onClose,

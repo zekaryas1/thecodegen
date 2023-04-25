@@ -1,5 +1,7 @@
 import { DataTableProps } from "primereact/datatable";
 
+export const PROJECT_NAME = "Codegen";
+
 export const STATUS_COLORS: Record<string, string> = {
   pending: "text-yellow-700",
   rejected: "text-red-700",
@@ -40,27 +42,40 @@ Entity = {{ name | upcase }}
 > btw, you can also write markdown and templates together(wip)
 `;
 
-export const TABLE_CLASSNAMES =
-  "shadow-1 border-1 px-4 pt-4 surface-card border-round border-200";
-
-export const TABLE_PROPS: DataTableProps = {
-  className: TABLE_CLASSNAMES,
-  rowHover: true,
-  responsiveLayout: "scroll",
-  paginator: true,
-  stripedRows: false,
-  rows: 5,
-  rowsPerPageOptions: [5, 10, 25, 50],
+export const GLOBAL_STYLES = {
+  forTable: "shadow-2xl",
+  forDialog: {
+    width: "40vw",
+  },
+  forLinearGradient: {
+    background: "linear-gradient(0deg, #0d0c0c 0%, #1c1d1a 100%)",
+  },
+  forHeaderPattern: {
+    background: `radial-gradient(35.36% 35.36% at 100% 25%,#0000 66%,#0f0d0d 68% 70%,#0000 72%) 32px 32px/calc(2*32px) calc(2*32px),
+    radial-gradient(35.36% 35.36% at 0    75%,#0000 66%,#0f0d0d 68% 70%,#0000 72%) 32px 32px/calc(2*32px) calc(2*32px),
+    radial-gradient(35.36% 35.36% at 100% 25%,#0000 66%,#0f0d0d 68% 70%,#0000 72%) 0 0/calc(2*32px) calc(2*32px),
+    radial-gradient(35.36% 35.36% at 0    75%,#0000 66%,#0f0d0d 68% 70%,#0000 72%) 0 0/calc(2*32px) calc(2*32px),
+    repeating-conic-gradient(rgba(18, 18, 18, 0) 0 25%,#0000 0 50%) 0 0/calc(2*32px) calc(2*32px),
+    radial-gradient(#0000 66%,#0f0d0d 68% 70%,#0000 72%) 0 calc(32px/2)/32px 32px
+    rgba(18, 18, 18, 0)`,
+  },
 };
 
-export const DIALOG_STYLES = {
-  width: "40vw",
+export const TABLE_PROPS: DataTableProps = {
+  className: GLOBAL_STYLES.forTable,
+  rowHover: true,
+  showGridlines: true,
+  responsiveLayout: "scroll",
+  paginator: true,
+  stripedRows: true,
+  rows: 5,
+  rowsPerPageOptions: [5, 10, 25, 50],
 };
 
 export const DIALOG_PROPS: Record<string, any> = {
   maximizable: true,
   modal: true,
-  style: DIALOG_STYLES,
+  style: GLOBAL_STYLES.forDialog,
 };
 
 export const DESTINATIONS = {
@@ -78,7 +93,7 @@ export const DESTINATIONS = {
       icon: "pi pi-fw pi-users",
     },
   ],
-  fromPrject: [
+  fromProject: [
     {
       label: "Go to Invitations",
       icon: "pi pi-envelope",
@@ -107,8 +122,5 @@ export const DESTINATIONS = {
     },
   ],
 };
-
-export const PROJECT_NAME = "Codegen";
-
 
 export const MARKDOWN_INDICATOR = '[//]: # "markdown"';

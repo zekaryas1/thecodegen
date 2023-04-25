@@ -113,7 +113,7 @@ function ProjectInvitations() {
   );
 
   return (
-    <>
+    <div className="min-h-screen">
       <ConfirmPopup />
       <div className="p-4">
         <DataTable
@@ -143,7 +143,7 @@ function ProjectInvitations() {
           <Column field="action" header="Action" body={actionBody}></Column>
         </DataTable>
       </div>
-    </>
+    </div>
   );
 }
 

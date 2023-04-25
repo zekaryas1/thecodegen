@@ -74,7 +74,7 @@ const Projects: NextPageWithLayout = () => {
 
   return (
     <>
-      <div className="p-4 h-screen">
+      <div className="p-4 min-h-screen">
         <div className="flex justify-content-between">
           <span className="p-buttonset">
             <Button
@@ -157,7 +157,7 @@ Projects.getLayout = function PageLayout(page: ReactElement) {
       <Header
         title="What are you working on today?"
         subTitle="Select or create a project to get started"
-        listOfDestinations={DESTINATIONS.fromPrject}
+        listOfDestinations={DESTINATIONS.fromProject}
         onDestionationsClick={(destination) => {
           if (destination === "Logout") {
             confirm1();

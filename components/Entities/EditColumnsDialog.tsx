@@ -9,7 +9,7 @@ import { Column, ConstraintType } from "../../lib/models/Column";
 import { Dropdown, DropdownChangeParams } from "primereact/dropdown";
 import { myConfirmPopUp } from "../MyConfirmPopup";
 import { ConfirmPopup } from "primereact/confirmpopup";
-import { DATA_TYPES, DIALOG_PROPS, DIALOG_STYLES } from "../../lib/fixed";
+import { DATA_TYPES, DIALOG_PROPS } from "../../lib/fixed";
 
 function EditColumnsDialog({
   onClose,

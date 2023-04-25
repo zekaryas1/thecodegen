@@ -3,7 +3,7 @@ import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
 import React, { useState } from "react";
 import { DialogProps } from "../../lib/models/InterfaceProps";
-import { DIALOG_PROPS, DIALOG_STYLES } from "../../lib/fixed";
+import { DIALOG_PROPS } from "../../lib/fixed";
 
 function ManageMemberDialog({ onClose, show, onSubmit }: DialogProps<string>) {
   const [email, setEmail] = useState<string>("");
