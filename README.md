@@ -1,7 +1,7 @@
 # The Codegen
 
-![project screenshot apr 24, 2023](Screenshot.png)
-- [A demo video using this app](https://drive.google.com/file/d/1GYLT_dNrmJN0VHL3i5qobWuZpu_toDZB/view?usp=sharing)
+- ![project screenshot apr 24, 2023](Screenshot.png)
+- [🎥 A short video of using this app to create node.js MVC based crud files](https://drive.google.com/file/d/1GYLT_dNrmJN0VHL3i5qobWuZpu_toDZB/view?usp=sharing)
 
 - [The Codegen](#the-codegen)
   - [About](#about)
