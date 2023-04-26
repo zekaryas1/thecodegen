@@ -39,10 +39,17 @@
 - Create a .env file at the root level, with the following information
 
 ```
+# required env variables
 DATABASE_URL=${postgres database url}
 GITHUB_ID=${github client id}
 GITHUB_SECRET=${github secret}
 NEXTAUTH_SECRET=${random base64 value i.e openssl rand -base64 32}
+```
+
+```
+# optional env variables
+NEXT_PUBLIC_PROJECT_NAME=${Project name, "The Codegen"}
+NEXT_PUBLIC_PROJECT_DESCRIPTION_MAX_LENGTH=${Length, 80}
 ```
 
 ### Database setup
