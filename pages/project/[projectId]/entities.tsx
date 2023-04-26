@@ -13,6 +13,7 @@ import AdminOrOwner from "../../../components/AdminOrOwner";
 import EntitiesToolBar from "../../../components/Entities/EntitiesToolBar";
 import MyEditor from "../../../components/MyEditor";
 import { Divider } from "primereact/divider";
+import Flow from "../../../components/Entities/Flow";
 
 function Entities() {
   const router = useRouter();
@@ -103,10 +104,20 @@ function Entities() {
         </div>
 
         <div className="col pl-0">
-          <MyEditor
+          {/* <MyEditor
             height="100%"
             defaultLanguage="json"
             defaultValue={entityToString(selectedEntity)}
+          /> */}
+          <Flow
+            initialNodes={entities.data.map((it) => {
+              return {
+                id: it.id,
+                type: "textUpdater",
+                position: { x: 0, y: 0 },
+                data: it,
+              };
+            })}
           />
         </div>
       </div>
