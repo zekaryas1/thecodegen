@@ -40,9 +40,11 @@ function ManageGeneratorDialog({
       <ConfirmPopup />
       <form className="flex flex-column gap-4" onSubmit={submitForm}>
         <InputText
-          placeholder="generator name"
+          placeholder="Name"
+          title="Generator's name"
           value={generator.name || ""}
           autoFocus={true}
+          required
           name="name"
           onChange={(e) => {
             setGenerator({ ...generator, name: e.target.value });

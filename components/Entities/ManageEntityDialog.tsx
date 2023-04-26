@@ -46,7 +46,8 @@ function ManageEntityDialog({
       <ConfirmPopup />
       <form className="flex flex-column gap-4" onSubmit={submitForm}>
         <InputText
-          placeholder="entity name"
+          placeholder="Name"
+          title="Entity's name"
           name="name"
           required
           autoFocus={true}

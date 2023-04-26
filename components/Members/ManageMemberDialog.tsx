@@ -23,7 +23,8 @@ function ManageMemberDialog({ onClose, show, onSubmit }: DialogProps<string>) {
     >
       <form className="flex flex-column gap-4" onSubmit={submitForm}>
         <InputText
-          placeholder="email"
+          placeholder="Email"
+          title="New members's email"
           required
           autoFocus={true}
           type="email"
