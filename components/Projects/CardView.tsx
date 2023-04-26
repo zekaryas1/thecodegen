@@ -92,7 +92,7 @@ function CardView({
   }
 
   if (projects.length === 0) {
-    return <h4 className="mt-4"> No recent projects to show! </h4>;
+    return <h4 className="mt-4"> Projects you open, will show up here. </h4>;
   }
 
   return (
