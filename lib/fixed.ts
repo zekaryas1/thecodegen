@@ -1,6 +1,14 @@
+/**
+ * Constant values that are fixed and do not change.
+ */
 import { DataTableProps } from "primereact/datatable";
 
-export const PROJECT_NAME = "Codegen";
+// load environment variables to be used in browser
+export const PROJECT_NAME =
+  process.env.NEXT_PUBLIC_PROJECT_NAME || "The Codegen";
+export const PROJECT_DESCRIPTION_MAX_LENGTH = parseInt(
+  process.env.NEXT_PUBLIC_PROJECT_DESCRIPTION_MAX_LENGTH || "80"
+);
 
 export const STATUS_COLORS: Record<string, string> = {
   pending: "text-yellow-700",
@@ -15,6 +23,8 @@ export const DATA_TYPES = [
   { name: "Date", code: "date" },
   { name: "Array", code: "array" },
 ];
+
+export const MARKDOWN_INDICATOR = '[//]: # "markdown"';
 
 // language=txt
 export const DEFAULT_TEMPLATE = `[//]: # "markdown"
@@ -122,5 +132,3 @@ export const DESTINATIONS = {
     },
   ],
 };
-
-export const MARKDOWN_INDICATOR = '[//]: # "markdown"';

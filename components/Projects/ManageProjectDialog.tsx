@@ -6,7 +6,7 @@ import { ConfirmPopup } from "primereact/confirmpopup";
 import { DialogProps } from "../../lib/models/InterfaceProps";
 import { Project } from "../../lib/models/Project";
 import { myConfirmPopUp } from "../MyConfirmPopup";
-import { DIALOG_PROPS } from "../../lib/fixed";
+import { DIALOG_PROPS, PROJECT_DESCRIPTION_MAX_LENGTH } from "../../lib/fixed";
 
 function ManageProjectDialog({
   onClose,
@@ -46,7 +46,8 @@ function ManageProjectDialog({
       <ConfirmPopup />
       <form className="flex flex-column gap-4" onSubmit={submitForm}>
         <InputText
-          placeholder="project name"
+          placeholder="Name"
+          title="New project's name"
           required
           name="name"
           value={project.name || ""}
@@ -54,8 +55,10 @@ function ManageProjectDialog({
           autoFocus={true}
         />
         <InputText
-          placeholder="short project description"
+          placeholder={`Description not more than (${PROJECT_DESCRIPTION_MAX_LENGTH}) characters`}
           name="description"
+          required
+          maxLength={PROJECT_DESCRIPTION_MAX_LENGTH}
           value={project.description || ""}
           onChange={updateState}
         />
