@@ -1,24 +1,24 @@
-import { Entity } from "@prisma/client";
 import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
 import { useCallback } from "react";
 import { Handle, Position } from "reactflow";
+import { Entity } from "../../lib/models/Entity";
 
-function FlowSchemaUI({ data }: { data: any }) {
-  const onChange = useCallback((evt) => {
-    console.log(evt.target.value);
-  }, []);
+interface FlowSchemaUIProps {
+  data: Entity;
+}
 
+function FlowSchemaUI({ data }: FlowSchemaUIProps) {
   const headerBody = () => {
-    return <p className="text-primary">{data.name}</p>;
+    return <p className="text-primary"> <i className="pi pi-table" /> {data.name}</p>;
   };
 
   const typeBody = (data: any) => {
-    return <p className="font-italic text-xs">{data.type}</p>
-  }
+    return <p className="font-italic text-xs">{data.type}</p>;
+  };
 
   return (
-    <div className="bg-red-100">
+    <div className="bg-red-100 w-12rem">
       <Handle type="target" position={Position.Top} />
       <DataTable
         value={data.columns}

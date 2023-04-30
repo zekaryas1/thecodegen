@@ -1,12 +1,17 @@
 import { Button } from "primereact/button";
 import { Entity } from "../../lib/models/Entity";
 import Conditional from "../Conditional";
+import { SelectButton } from "primereact/selectbutton";
+import { useState } from "react";
 
 interface EntitiesToolBarProps {
   currentEntity: Entity;
   onAddClick: () => void;
   onManageClick: () => void;
   onUpdateColumnsClick: () => void;
+  viewOptions: string[];
+  currentViewValue: string;
+  onViewChange: (value: string) => void;
 }
 
 function EntitiesToolBar({
@@ -14,6 +19,9 @@ function EntitiesToolBar({
   onAddClick,
   onManageClick,
   onUpdateColumnsClick,
+  viewOptions,
+  currentViewValue,
+  onViewChange,
 }: EntitiesToolBarProps) {
   return (
     <div className="flex surface-50 mb-3 justify-content-between align-items-center p-3 border-round-lg">
@@ -38,6 +46,15 @@ function EntitiesToolBar({
               onClick={onManageClick}
             />
           }
+        />
+      </div>
+      <div>
+        <SelectButton
+          tooltip="Click to change view"
+          tooltipOptions={{ position: "bottom" }}
+          value={currentViewValue}
+          onChange={(e) => onViewChange(e.value)}
+          options={viewOptions}
         />
       </div>
       <Conditional

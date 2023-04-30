@@ -14,6 +14,8 @@ import EntitiesToolBar from "../../../components/Entities/EntitiesToolBar";
 import MyEditor from "../../../components/MyEditor";
 import { Divider } from "primereact/divider";
 import Flow from "../../../components/Entities/Flow";
+import { ReactFlowProvider } from "reactflow";
+import Conditional from "../../../components/Conditional";
 
 function Entities() {
   const router = useRouter();
@@ -31,6 +33,8 @@ function Entities() {
   const [manageDialogData, setManageDialogData] = useState<Entity>({});
   const [showColumnsDialog, setShowColumnsDialog] = useState(false);
   const [showEntityDialog, setShowEntityDialog] = useState(false);
+
+  const [currentViewOption, setCurrentViewOption] = useState("json");
 
   useEffect(() => {
     setSelectedEntity((prevState) => {
@@ -90,6 +94,11 @@ function Entities() {
             setEditColumnsDialogData(selectedEntity);
             setShowColumnsDialog(true);
           }}
+          viewOptions={["json", "diagram"]}
+          currentViewValue={currentViewOption}
+          onViewChange={(newView) => {
+            setCurrentViewOption(newView);
+          }}
         />
         <Divider />
       </AdminOrOwner>
@@ -104,20 +113,29 @@ function Entities() {
         </div>
 
         <div className="col pl-0">
-          {/* <MyEditor
-            height="100%"
-            defaultLanguage="json"
-            defaultValue={entityToString(selectedEntity)}
-          /> */}
-          <Flow
-            initialNodes={entities.data.map((it) => {
-              return {
-                id: it.id,
-                type: "textUpdater",
-                position: { x: 0, y: 0 },
-                data: it,
-              };
-            })}
+          <Conditional
+            if={currentViewOption === "diagram"}
+            show={
+              <ReactFlowProvider>
+                <Flow
+                  data={entities.data.map((it: Entity) => {
+                    return {
+                      id: it.id,
+                      type: "textUpdater",
+                      position: { x: 0, y: 0 },
+                      data: it,
+                    };
+                  })}
+                />
+              </ReactFlowProvider>
+            }
+            else={
+              <MyEditor
+                height="100%"
+                defaultLanguage="json"
+                defaultValue={entityToString(selectedEntity)}
+              />
+            }
           />
         </div>
       </div>
