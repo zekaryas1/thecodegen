@@ -1,8 +1,7 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import useSWR from "swr";
 import { Generator } from "../../../lib/models/Generator";
 import { Template } from "../../../lib/models/Template";
-import { TemplateService } from "../../../lib/services/TemplateService";
 import { Entity } from "../../../lib/models/Entity";
 import { GeneratorService } from "../../../lib/services/GeneratorService";
 import { useRouter } from "next/router";
@@ -13,14 +12,13 @@ import { LoadingIndicator } from "../../../components/LoadingIndicator";
 import { Toast } from "primereact/toast";
 import { Splitter, SplitterPanel } from "primereact/splitter";
 import MyEditor from "../../../components/MyEditor";
-import { engine } from "../../../lib/engine";
 import CodesToolBar from "../../../components/Codes/CodesToolBar";
 import { Divider } from "primereact/divider";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import "github-markdown-css";
 import Conditional from "../../../components/Conditional";
-import { MARKDOWN_INDICATOR } from "../../../lib/fixed";
+import { CodeUtils } from "../../../components/Codes/CodesUtils";
 
 function Codes() {
   const router = useRouter();
@@ -54,44 +52,58 @@ function Codes() {
     });
   }, [generators?.data]);
 
-  const saveNewGenerator = async (newGenerator: Generator) => {
-    if (newGenerator.id) {
-      await GeneratorService.update(newGenerator, projectId);
-      refreshGenerators();
-    } else {
-      const response = await GeneratorService.create(
-        newGenerator,
-        projectId
-      ).then((res) => res.data);
-      refreshGenerators({ ...generators, response });
-    }
+  const saveNewGenerator = (newGenerator: Generator) => {
+    CodeUtils.saveNewGenerator({
+      newGenerator: newGenerator,
+      projectId: projectId as string,
+      onSuccess: (response) => {
+        if (newGenerator.id) {
+          refreshGenerators();
+        } else {
+          refreshGenerators({ ...generators, response });
+        }
+      },
+    });
+  };
+
+  const show = (message: {
+    severity: "success" | "error";
+    summary: string;
+    detail: string;
+  }) => {
+    //@ts-ignore
+    toast.current.show(message);
   };
 
   /**
    * Call api to Updates a template and displays a success message if successful
    * @param {Template} newTemplate - The new template to update
    */
-  const updateTemplate = async (newTemplate: Template) => {
-    const updatedTemplate = {
-      ...newTemplate,
-      body: selectedGenerator?.template?.body || "",
-    };
-    const res = await TemplateService.update(updatedTemplate, projectId);
-
-    if (res.statusText === "OK") {
-      show({
-        severity: "success",
-        summary: "Template saved",
-        detail: "",
-      });
-      refreshGenerators();
-    } else {
-      show({
-        severity: "error",
-        summary: "Template can not be saved",
-        detail: "Something went wrong",
-      });
+  const updateTemplate = (newTemplate: Template) => {
+    if (!selectedGenerator.template) {
+      return;
     }
+
+    CodeUtils.updateTemplate({
+      newTemplate: newTemplate,
+      projectId: projectId as string,
+      body: selectedGenerator?.template?.body || "",
+      onSuccess() {
+        show({
+          severity: "success",
+          summary: "Template saved",
+          detail: "",
+        });
+        refreshGenerators();
+      },
+      onError() {
+        show({
+          severity: "error",
+          summary: "Template can not be saved",
+          detail: "Something went wrong",
+        });
+      },
+    });
   };
 
   /**
@@ -111,23 +123,17 @@ function Codes() {
     }));
   };
 
-  const show = (message: {
-    severity: "success" | "error";
-    summary: string;
-    detail: string;
-  }) => {
-    //@ts-ignore
-    toast.current.show(message);
-  };
-
-  const deleteGenerator = async (id: string) => {
-    const response = await GeneratorService.delete(id, projectId);
-    if (response.statusText == "OK") {
-      setSelectedGenerator({});
-      refreshGenerators({
-        ...generators.data.filter((it: Generator) => it.id != id),
-      });
-    }
+  const deleteGenerator = (id: string) => {
+    CodeUtils.deleteGenerator({
+      id: id,
+      projectId: projectId as string,
+      onSuccess(result) {
+        setSelectedGenerator({});
+        refreshGenerators({
+          ...generators.data.filter((it: Generator) => it.id != id),
+        });
+      },
+    });
   };
 
   const openGeneratorDialogWith = (generator: Generator) => {
@@ -135,52 +141,42 @@ function Codes() {
     setShowManageGeneratorDialog(true);
   };
 
-  const regenerateResult = async (template: string, entity: Entity) => {
-    if (template) {
-      const result = await engine
-        .parseAndRender(template, {
-          name: entity.name,
-          columns: entity.columns,
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-      return result;
-    }
-    return "";
-  };
-
   const codeBlockToShow = () => {
-    const editor = (
-      <MyEditor
-        height="100%"
-        defaultLanguage={selectedGenerator.name?.split(".")[1] || "liquid"}
-        defaultValue={generatedCode}
+    return (
+      <Conditional
+        if={showMarkDown}
+        show={
+          <ReactMarkdown
+            remarkPlugins={[[remarkGfm, { singleTilde: false }]]}
+            className="markdown-body bg-transparent h-full px-3 py-4 border-gray-400 border-1"
+          >
+            {generatedCode}
+          </ReactMarkdown>
+        }
+        else={
+          <MyEditor
+            height="100%"
+            defaultLanguage={selectedGenerator.name?.split(".")[1] || "liquid"}
+            defaultValue={generatedCode}
+          />
+        }
       />
     );
-    const markDown = (
-      <ReactMarkdown
-        remarkPlugins={[[remarkGfm, { singleTilde: false }]]}
-        className="markdown-body bg-transparent h-full px-3 py-4 border-gray-400 border-1"
-      >
-        {generatedCode}
-      </ReactMarkdown>
-    );
-
-    return <Conditional if={showMarkDown} show={markDown} else={editor} />;
   };
 
-  const onRegenerateButtonClick = async () => {
-    const template = selectedGenerator.template?.body || "";
-    const generatedCode = await regenerateResult(template, selectedEntity);
-
-    if (generatedCode && generatedCode.startsWith(MARKDOWN_INDICATOR)) {
-      setShowMarkDown(true);
-    } else {
-      setShowMarkDown(false);
-    }
-
-    setGeneratedCode(generatedCode);
+  const onRegenerateButtonClick = () => {
+    CodeUtils.onRegenerateButtonClick({
+      template: selectedGenerator.template?.body || "",
+      entity: selectedEntity,
+      onShowMarkdown(markDownOutPut: string) {
+        setShowMarkDown(true);
+        setGeneratedCode(markDownOutPut);
+      },
+      onShowCode(codeOutPut: string) {
+        setShowMarkDown(false);
+        setGeneratedCode(codeOutPut);
+      },
+    });
   };
 
   if (isLoading) {
@@ -195,10 +191,7 @@ function Codes() {
         addClick={() => openGeneratorDialogWith({})}
         manageClick={() => openGeneratorDialogWith(selectedGenerator)}
         updateCurrentEntity={setSelectedEntity}
-        updateTemplate={() => {
-          selectedGenerator.template &&
-            updateTemplate(selectedGenerator.template);
-        }}
+        updateTemplate={updateTemplate}
         regenerateResult={onRegenerateButtonClick}
         listOfEntities={entities?.data || []}
       />
