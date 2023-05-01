@@ -5,11 +5,8 @@ import { MemberService } from "../../../lib/services/MemberService";
 import { useSession } from "next-auth/react";
 import SearchFilter, { useFilters } from "../../../components/SearchFilter";
 import { Member } from "../../../lib/models/Member";
-import { UserRole } from "../../../lib/models/User";
 import { Button } from "primereact/button";
-import { myConfirmPopUp } from "../../../components/MyConfirmPopup";
 import AdminOrOwner from "../../../components/AdminOrOwner";
-import ToggleRole from "../../../components/Members/ToggleUserRole";
 import { Chip } from "primereact/chip";
 import { STATUS_COLORS, TABLE_PROPS } from "../../../lib/fixed";
 import TimeAgo from "react-timeago";
@@ -18,6 +15,10 @@ import { Column } from "primereact/column";
 import ManageMemberDialog from "../../../components/Members/ManageMemberDialog";
 import { ConfirmPopup } from "primereact/confirmpopup";
 import Conditional from "../../../components/Conditional";
+import { MembersUtils } from "../../../components/Members/MembersUtils";
+import { myConfirmPopUp } from "../../../components/MyConfirmPopup";
+import ToggleRole from "../../../components/Members/ToggleUserRole";
+import { UserRole } from "../../../lib/models/User";
 
 function Members() {
   const router = useRouter();
@@ -31,86 +32,73 @@ function Members() {
   const { data: session } = useSession();
   const [filters, setFilters] = useFilters();
 
-  const inviteNewMember = async (email: string) => {
-    const response = await MemberService.create(
-      {
-        inviteeEmail: email,
+  const inviteNewMember = (email: string) => {
+    MembersUtils.inviteNewMember({
+      newMembersEmail: email,
+      projectId: projectId as string,
+      onSuccess(response) {
+        refreshMembers({ ...members, response });
       },
-      projectId
-    );
-    refreshMembers({ ...members, response });
+    });
   };
 
-  const deleteMember = async (id: string) => {
-    await MemberService.delete(id, projectId);
-    refreshMembers({ ...members.data.filter((it: Member) => it.id !== id) });
+  const deleteMember = (data: Member, event: any) => {
+    myConfirmPopUp({
+      event: event,
+      acceptCallBack: () =>
+        data.id &&
+        MembersUtils.deleteMember({
+          memberId: data.id,
+          projectId: projectId as string,
+          onSuccess() {
+            refreshMembers();
+          },
+        }),
+    });
+  };
+
+  /**
+   * Returns a JSX element that conditionally renders a ToggleRole component if
+   * the data.role prop is truthy.
+   *
+   * @returns {JSX.Element} The JSX element to render.
+   */
+  const toggleRoleOptions = (input: {
+    projectId: string;
+    data: Member;
+    onSuccess: () => void;
+  }) => {
+    const onChangeRoleClicked = (role: UserRole) => {
+      MembersUtils.updateRoleTo({
+        projectId: input.projectId,
+        role: role,
+        data: input.data,
+        onSuccess: input.onSuccess,
+      });
+    };
+
+    return (
+      <Conditional
+        if={input.data.role}
+        show={
+          <AdminOrOwner>
+            <ToggleRole
+              oldRole={input.data.role!}
+              onClick={onChangeRoleClicked}
+            />
+          </AdminOrOwner>
+        }
+      />
+    );
   };
 
   const actionBody = (data: Member) => {
-    const updateRoleTo = async (role: UserRole) => {
-      const res = await MemberService.update(
-        {
-          ...data,
-          role: role,
-        },
-        projectId
-      );
-      refreshMembers();
-    };
-
-    /**
-     * Returns a React Button component that can be clicked to remove a member.
-     *
-     * @return {React.Component|null} A React Button component or null.
-     */
-
-    const removeMemberButton = () => {
-      const buttonToShow = (label: string) => (
+    const removeButton = (label: string) => {
+      return (
         <Button
           label={label}
           className="p-button-sm p-button-danger p-button-text"
-          onClick={(event) => {
-            myConfirmPopUp({
-              event: event,
-              acceptCallBack: () => data.id && deleteMember(data.id),
-            });
-          }}
-        />
-      );
-
-      // we only show - remove button when
-      // current user is not the project owner
-      //owner can not be removed
-      // when the user is the current logged in user
-      //users can remove themselves from a project
-      // and the user is an admin
-      //an admin can remove other not owner members
-      if (
-        data.role !== UserRole.OWNER &&
-        data.inviteeEmail === session?.user?.email
-      ) {
-        return buttonToShow("Leave project");
-      } else if (data.role !== UserRole.OWNER) {
-        return <AdminOrOwner>{buttonToShow("Remove user")}</AdminOrOwner>;
-      }
-      return null;
-    };
-
-    /**
-     * Returns a JSX element that conditionally renders a ToggleRole component if
-     * the data.role prop is truthy.
-     *
-     * @returns {JSX.Element} The JSX element to render.
-     */
-    const toggleRoleOptions = (): JSX.Element => {
-      return (
-        <Conditional
-          if={data.role}
-          show={
-            <AdminOrOwner>
-              <ToggleRole oldRole={data.role!} onClick={updateRoleTo} />
-            </AdminOrOwner>
-          }
+          onClick={(event) => deleteMember(data, event)}
         />
       );
     };
@@ -118,8 +106,23 @@ function Members() {
     return (
       <>
         <div className="flex">
-          {removeMemberButton()}
-          {toggleRoleOptions()}
+          {MembersUtils.removeMemberButton({
+            data: data,
+            currentLoggedInUserEmail: session?.user?.email as string,
+            leaveProjectButton(): JSX.Element {
+              return removeButton("Leave project");
+            },
+            removeUserButton(): JSX.Element {
+              return <AdminOrOwner>{removeButton("Remove user")}</AdminOrOwner>;
+            },
+          })}
+          {toggleRoleOptions({
+            projectId: projectId as string,
+            data: data,
+            onSuccess() {
+              refreshMembers();
+            },
+          })}
         </div>
       </>
     );
