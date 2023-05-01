@@ -38,24 +38,31 @@ const Projects: NextPageWithLayout = () => {
   }, []);
 
   /**
-   * Manages a project. If the project is new, it creates a new project. If the project is existing, it updates the project.
+   * Manages a project. If the project is new, it creates a new project. 
+   * If the project is existing, it updates the project.
    * @param {Project} project - The project object to be displayed.
    */
-  const manageProject = async (project: Project) => {
-    if (project.id) {
-      await ProjectService.update(project).then((res) => res.data);
-      refreshProjects();
-    } else {
-      const response = await ProjectService.create(project).then(
-        (res) => res.data
-      );
-      refreshProjects({ ...projects, response });
-    }
+  const manageProject = (project: Project) => {
+    ProjectUtils.manageProject({
+      project: project,
+      onSuccessfulCreation(response) {
+        refreshProjects({ ...projects, response });
+      },
+      onSuccessfulUpdate(response) {
+        refreshProjects();
+      },
+    });
   };
 
-  const deleteProject = async (id: string) => {
-    await ProjectService.delete(id);
-    refreshProjects({ ...projects.data.filter((it: Project) => it.id !== id) });
+  const deleteProject = (id: string) => {
+    ProjectUtils.deleteProject({
+      id: id,
+      onSuccess() {
+        refreshProjects({
+          ...projects.data.filter((it: Project) => it.id !== id),
+        });
+      },
+    });
   };
 
   const onDialogClose = () => {

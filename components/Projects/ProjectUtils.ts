@@ -1,5 +1,6 @@
 import { error } from "console";
 import { ProjectService } from "../../lib/services/ProjectService";
+import { Project } from "../../lib/models/Project";
 
 /**
  * Utility functions for projects
@@ -49,5 +50,37 @@ export class ProjectUtils {
       prevItems.pop();
     }
     localStorage.setItem("recentProjects", JSON.stringify(prevItems));
+  };
+
+  /**
+   * Manages a project. If the project is new, it creates a new project. If the project is existing, it updates the project.
+   * @param {Project} project - The project object to be displayed.
+   */
+  static manageProject = async (input: {
+    project: Project;
+    onSuccessfulUpdate: (response: Project) => void;
+    onSuccessfulCreation: (response: Project) => void;
+  }) => {
+    if (input.project.id) {
+      const response = await ProjectService.update(input.project);
+      if (response.statusText === "OK") {
+        input.onSuccessfulUpdate(response.data);
+      }
+    } else {
+      const response = await ProjectService.create(input.project);
+      if (response.statusText === "OK") {
+        input.onSuccessfulCreation(response.data);
+      }
+    }
+  };
+
+  static deleteProject = async (input: {
+    id: string;
+    onSuccess: () => void;
+  }) => {
+    const response = await ProjectService.delete(input.id);
+    if (response.statusText === "OK") {
+      input.onSuccess();
+    }
   };
 }
