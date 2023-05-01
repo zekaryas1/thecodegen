@@ -46,23 +46,24 @@ export class CodeUtils {
     }
   };
 
-  static saveNewGenerator = async (input: {
+  static manageGenerator = async (input: {
     newGenerator: Generator;
     projectId: string;
-    onSuccess: (result: Generator) => void;
+    onSuccessfulUpdate: () => void;
+    onSuccessfulCreate: (newEntity: Generator) => void;
   }) => {
     if (input.newGenerator.id) {
       const response = await GeneratorService.update(
         input.newGenerator,
         input.projectId
       ).then((res) => res.data);
-      input.onSuccess(response);
+      input.onSuccessfulUpdate();
     } else {
       const response = await GeneratorService.create(
         input.newGenerator,
         input.projectId
       ).then((res) => res.data);
-      input.onSuccess(response);
+      input.onSuccessfulCreate(response);
     }
   };
 

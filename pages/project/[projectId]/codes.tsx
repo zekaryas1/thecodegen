@@ -52,16 +52,15 @@ function Codes() {
     });
   }, [generators?.data]);
 
-  const saveNewGenerator = (newGenerator: Generator) => {
-    CodeUtils.saveNewGenerator({
+  const manageGenerator = (newGenerator: Generator) => {
+    CodeUtils.manageGenerator({
       newGenerator: newGenerator,
       projectId: projectId as string,
-      onSuccess: (response) => {
-        if (newGenerator.id) {
-          refreshGenerators();
-        } else {
-          refreshGenerators({ ...generators, response });
-        }
+      onSuccessfulCreate(newEntity) {
+        refreshGenerators({ ...generators, response: newEntity });
+      },
+      onSuccessfulUpdate() {
+        refreshGenerators();
       },
     });
   };
@@ -224,7 +223,7 @@ function Codes() {
         <ManageGeneratorDialog
           data={dialogData}
           onDelete={deleteGenerator}
-          onSubmit={saveNewGenerator}
+          onSubmit={manageGenerator}
           onClose={() => setShowManageGeneratorDialog(false)}
           show={showManageGeneratorDialog}
         />
