@@ -24,7 +24,7 @@ export default async function handler(
           template: true,
         },
       });
-      return res.status(HttpStatusCode.Ok).json({ data: generator });
+      return res.status(200).json({ data: generator });
     }
   }
 
@@ -38,7 +38,7 @@ export default async function handler(
         },
       });
 
-      return res.status(HttpStatusCode.Ok).json({ data: generator });
+      return res.status(200).json({ data: generator });
     }
   }
 
@@ -56,7 +56,7 @@ export default async function handler(
         },
       });
 
-      return res.status(HttpStatusCode.Ok).json({ data: generator });
+      return res.status(200).json({ data: generator });
     }
   }
 
