@@ -86,12 +86,12 @@ function Codes() {
     CodeUtils.updateTemplate({
       newTemplate: newTemplate,
       projectId: projectId as string,
-      body: selectedGenerator?.template?.body || "",
+      body: selectedGenerator.template.body || "",
       onSuccess() {
         show({
           severity: "success",
           summary: "Template saved",
-          detail: "",
+          detail: "Template has been saved successfully",
         });
         refreshGenerators();
       },
@@ -99,7 +99,7 @@ function Codes() {
         show({
           severity: "error",
           summary: "Template can not be saved",
-          detail: "Something went wrong",
+          detail: "Something went wrong, is database ok?",
         });
       },
     });
