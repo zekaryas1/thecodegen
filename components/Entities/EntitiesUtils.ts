@@ -18,7 +18,7 @@ export class EntitiesUtils {
     } else {
       const res = await EntityService.create(input.entity, input.projectId);
       if (res.statusText === "OK") {
-        input.onSuccessfulCreate(res.data);
+        input.onSuccessfulCreate(res.data.data);
       }
     }
   };
