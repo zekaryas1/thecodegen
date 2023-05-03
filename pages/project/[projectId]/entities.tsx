@@ -45,6 +45,7 @@ function Entities() {
       projectId: projectId as string,
       entity: entity,
       onSuccessfulCreate(response: Entity) {
+        setSelectedEntity(response);
         refreshEntities({ ...entities, response });
       },
       onSuccessfulUpdate() {
