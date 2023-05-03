@@ -7,6 +7,7 @@ import { myConfirmPopUp } from "../MyConfirmPopup";
 import { Generator } from "../../lib/models/Generator";
 import { DialogProps } from "../../lib/models/InterfaceProps";
 import { DIALOG_PROPS } from "../../lib/fixed";
+import Conditional from "../Conditional";
 
 function ManageGeneratorDialog({
   onClose,
@@ -53,12 +54,17 @@ function ManageGeneratorDialog({
 
         <div className="flex justify-content-end gap-2">
           <Button label="Save" />
-          <Button
-            label="Delete"
-            type="button"
-            className="p-button-text p-button-danger"
-            onClick={(event) =>
-              myConfirmPopUp({ event: event, acceptCallBack: acceptDelete })
+          <Conditional
+            if={generator.id}
+            show={
+              <Button
+                label="Delete"
+                type="button"
+                className="p-button-text p-button-danger"
+                onClick={(event) =>
+                  myConfirmPopUp({ event: event, acceptCallBack: acceptDelete })
+                }
+              />
             }
           />
         </div>

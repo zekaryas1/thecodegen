@@ -7,6 +7,7 @@ import { DialogProps } from "../../lib/models/InterfaceProps";
 import { Entity } from "../../lib/models/Entity";
 import { myConfirmPopUp } from "../MyConfirmPopup";
 import { DIALOG_PROPS } from "../../lib/fixed";
+import Conditional from "../Conditional";
 
 function ManageEntityDialog({
   data,
@@ -56,17 +57,20 @@ function ManageEntityDialog({
         />
 
         <div className="flex justify-content-end gap-2">
-          <Button label={entity.id ? "Edit" : "Save"} type="submit" />
-          {entity.id && (
-            <Button
-              label="Delete"
-              type="button"
-              className="p-button-text p-button-danger"
-              onClick={(event) =>
-                myConfirmPopUp({ event: event, acceptCallBack: acceptDelete })
-              }
-            />
-          )}
+          <Button label="Save" type="submit" />
+          <Conditional
+            if={entity.id}
+            show={
+              <Button
+                label="Delete"
+                type="button"
+                className="p-button-text p-button-danger"
+                onClick={(event) =>
+                  myConfirmPopUp({ event: event, acceptCallBack: acceptDelete })
+                }
+              />
+            }
+          />
         </div>
       </form>
     </Dialog>
