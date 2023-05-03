@@ -1,6 +1,10 @@
 import { error } from "console";
 import { ProjectService } from "../../lib/services/ProjectService";
 import { Project } from "../../lib/models/Project";
+import {
+  MAX_NO_OF_RECENT_PROJECTS,
+  RECENT_PROJECTS_STORAGE_KEY,
+} from "../../lib/fixed";
 
 /**
  * Utility functions for projects
@@ -38,7 +42,10 @@ export class ProjectUtils {
    * @param projects
    */
   static saveRecentProjects = (projectIds: string[]) => {
-    localStorage.setItem("recentProjects", JSON.stringify(projectIds));
+    localStorage.setItem(
+      RECENT_PROJECTS_STORAGE_KEY,
+      JSON.stringify(projectIds)
+    );
   };
 
   /**
@@ -57,7 +64,7 @@ export class ProjectUtils {
       prevItems.splice(prevItems.indexOf(projectId), 1);
     }
     prevItems.unshift(projectId);
-    if (prevItems.length > 7) {
+    if (prevItems.length > MAX_NO_OF_RECENT_PROJECTS) {
       prevItems.pop();
     }
     ProjectUtils.saveRecentProjects(prevItems);
