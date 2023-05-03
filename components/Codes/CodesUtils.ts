@@ -53,10 +53,10 @@ export class CodeUtils {
     onSuccessfulCreate: (newEntity: Generator) => void;
   }) => {
     if (input.newGenerator.id) {
-      const response = await GeneratorService.update(
+      await GeneratorService.update(
         input.newGenerator,
         input.projectId
-      ).then((res) => res.data);
+      );
       input.onSuccessfulUpdate();
     } else {
       const response = await GeneratorService.create(
