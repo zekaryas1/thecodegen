@@ -11,16 +11,15 @@ export class EntitiesUtils {
     onSuccessfulCreate: (newEntity: Entity) => void;
   }) => {
     if (input.entity.id) {
-      await EntityService.update(input.entity, input.projectId).then(
-        (res) => res.data
-      );
-      input.onSuccessfulUpdate();
+      const res = await EntityService.update(input.entity, input.projectId);
+      if (res.statusText === "OK") {
+        input.onSuccessfulUpdate();
+      }
     } else {
-      const { data: response } = await EntityService.create(
-        input.entity,
-        input.projectId
-      ).then((res) => res.data);
-      input.onSuccessfulCreate(response);
+      const res = await EntityService.create(input.entity, input.projectId);
+      if (res.statusText === "OK") {
+        input.onSuccessfulCreate(res.data);
+      }
     }
   };
 
