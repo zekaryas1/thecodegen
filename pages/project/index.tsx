@@ -146,18 +146,14 @@ Projects.getLayout = function PageLayout(page: ReactElement) {
   const router = useRouter();
 
   const confirmLogout = () => {
-    const accept = () => {
-      signOut();
-    };
-
-    const reject = () => {};
-
     confirmDialog({
       message: "Are you sure you want to logout?",
       header: "Confirmation",
       icon: "pi pi-exclamation-triangle",
-      accept,
-      reject,
+      accept() {
+        signOut();
+      },
+      reject() {},
     });
   };
 
