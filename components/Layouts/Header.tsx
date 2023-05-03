@@ -9,9 +9,9 @@ export interface DestinationType {
   icon: string;
 }
 
-interface Props {
+interface HeaderProps {
   onTitleClick?: () => void;
-  onDestionationsClick?: (destination: string) => void;
+  onDestinationsClick?: (destination: string) => void;
   listOfDestinations?: DestinationType[];
   currentDestination?: DestinationType;
   title: string;
@@ -22,10 +22,10 @@ function Header({
   title,
   subTitle,
   onTitleClick,
-  onDestionationsClick,
+  onDestinationsClick,
   listOfDestinations,
   currentDestination,
-}: Props) {
+}: HeaderProps) {
   const { data: session } = useSession();
 
   const destinationsTemplate = (option: any) => {
@@ -39,7 +39,7 @@ function Header({
   };
 
   const onSelectButtonChange = (e: { value: { label: string } }) => {
-    onDestionationsClick && e.value && onDestionationsClick(e.value.label);
+    onDestinationsClick && e.value && onDestinationsClick(e.value.label);
   };
 
   return (

@@ -53,7 +53,7 @@ export default function MyLayout({ children }: Props) {
         onTitleClick={() => {
           router.push("/project");
         }}
-        onDestionationsClick={(destination: string) => {
+        onDestinationsClick={(destination: string) => {
           router.push(`/project/${projectId}/${destination}`);
         }}
         listOfDestinations={DESTINATIONS.fromDashboard}

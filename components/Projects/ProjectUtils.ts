@@ -22,19 +22,30 @@ export class ProjectUtils {
         .then((res) => res.data)
         .catch((error) => {
           isError = true;
-          console.log(error);
         });
       if (!isError && res.data) {
         output.push(res.data);
       }
     }
 
+    // some projects may have been deleted so save the clean recent projects again
+    ProjectUtils.saveRecentProjects(output.map((project) => project.id));
     return output;
   };
 
   /**
    * Saves recent projects to local storage.
-   * Then updates the state with the fetched projects.
+   * @param projects
+   */
+  static saveRecentProjects = (projectIds: string[]) => {
+    localStorage.setItem("recentProjects", JSON.stringify(projectIds));
+  };
+
+  /**
+   * Saves recent projects to local storage.
+   * It maintains a list of recently saved projects and ensures that the list has no more than 7 items.
+   * If the project already exists in the list, it removes the previous entry for that project
+   * before adding the new one to the beginning of the list.
    * @param projects
    * @returns {Promise<void>}
    * */
@@ -49,7 +60,7 @@ export class ProjectUtils {
     if (prevItems.length > 7) {
       prevItems.pop();
     }
-    localStorage.setItem("recentProjects", JSON.stringify(prevItems));
+    ProjectUtils.saveRecentProjects(prevItems);
   };
 
   /**
@@ -69,7 +80,7 @@ export class ProjectUtils {
     } else {
       const response = await ProjectService.create(input.project);
       if (response.statusText === "OK") {
-        input.onSuccessfulCreation(response.data);
+        input.onSuccessfulCreation(response.data.data);
       }
     }
   };

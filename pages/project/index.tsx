@@ -30,15 +30,15 @@ const Projects: NextPageWithLayout = () => {
   const [recentProjects, setRecentProjects] = useState<Project[]>();
 
   useEffect(() => {
-    const recentProjects = async () => {
-      const output = await ProjectUtils.loadRecentProjects();
-      setRecentProjects(output);
+    const getAndSetRecentProjects = async () => {
+      const recentProjects = await ProjectUtils.loadRecentProjects();
+      setRecentProjects(recentProjects);
     };
-    recentProjects();
-  }, []);
+    getAndSetRecentProjects();
+  }, [projects?.data]);
 
   /**
-   * Manages a project. If the project is new, it creates a new project. 
+   * Manages a project. If the project is new, it creates a new project.
    * If the project is existing, it updates the project.
    * @param {Project} project - The project object to be displayed.
    */
@@ -46,6 +46,9 @@ const Projects: NextPageWithLayout = () => {
     ProjectUtils.manageProject({
       project: project,
       onSuccessfulCreation(response) {
+        if (response.id) {
+          ProjectUtils.saveToRecentProjects(response.id);
+        }
         refreshProjects({ ...projects, response });
       },
       onSuccessfulUpdate(response) {
@@ -142,7 +145,7 @@ const Projects: NextPageWithLayout = () => {
 Projects.getLayout = function PageLayout(page: ReactElement) {
   const router = useRouter();
 
-  const confirm1 = () => {
+  const confirmLogout = () => {
     const accept = () => {
       signOut();
     };
@@ -165,9 +168,9 @@ Projects.getLayout = function PageLayout(page: ReactElement) {
         title="What are you working on today?"
         subTitle="Select or create a project to get started"
         listOfDestinations={DESTINATIONS.fromProject}
-        onDestionationsClick={(destination) => {
+        onDestinationsClick={(destination) => {
           if (destination === "Logout") {
-            confirm1();
+            confirmLogout();
           } else {
             router.push("/project/invitations");
           }
