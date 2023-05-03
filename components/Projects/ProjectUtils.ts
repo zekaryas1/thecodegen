@@ -16,7 +16,7 @@ export class ProjectUtils {
    */
   static loadRecentProjects = async () => {
     const prevItems: string[] = JSON.parse(
-      localStorage.getItem("recentProjects") || "[]"
+      localStorage.getItem(RECENT_PROJECTS_STORAGE_KEY) || "[]"
     );
 
     const output = [];
@@ -58,7 +58,7 @@ export class ProjectUtils {
    * */
   static saveToRecentProjects = (projectId: string) => {
     const prevItems: string[] = JSON.parse(
-      localStorage.getItem("recentProjects") || "[]"
+      localStorage.getItem(RECENT_PROJECTS_STORAGE_KEY) || "[]"
     );
     if (prevItems.includes(projectId)) {
       prevItems.splice(prevItems.indexOf(projectId), 1);
