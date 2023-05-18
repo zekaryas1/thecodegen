@@ -130,6 +130,12 @@ function Flow({
     }
   }, [rfInstance]);
 
+  const onRestart = useCallback(() => {
+    setEdges(initialEdges);
+
+    onSave();
+  }, [initialEdges, onSave, setEdges]);
+
   return (
     <>
       <div
@@ -147,14 +153,25 @@ function Flow({
         >
           <Panel position="top-right">
             <Button
-              label="Save"
+              label="Layout"
+              title="Save layout to memory"
+              icon="pi pi-save"
               className="p-button p-button-sm p-button-outlined mr-3"
               onClick={onSave}
             />
             <Button
-              label="Restore"
-              className="p-button p-button-sm p-button-outlined"
+              label="Layout"
+              title="Restore layout from memory"
+              icon="pi pi-refresh"
+              className="p-button p-button-sm p-button-outlined mr-3"
               onClick={onRestore}
+            />
+            <Button
+              label="Edges"
+              title="Pull latest edge data to layout"
+              icon="pi pi-sync"
+              className="p-button p-button-sm p-button-outlined p-button-info"
+              onClick={onRestart}
             />
           </Panel>
           <Controls />
