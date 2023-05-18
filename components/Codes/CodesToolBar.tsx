@@ -57,6 +57,7 @@ function CodesToolBar({
         <Dropdown
           filter
           filterPlaceholder="Search entities..."
+          dataKey="id"
           value={currentEntity}
           tooltip="Select an Entity to generate code for"
           tooltipOptions={{ position: "bottom" }}

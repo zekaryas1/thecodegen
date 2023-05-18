@@ -8,8 +8,11 @@ export class MemberService {
   };
 
   static myInfo = (projectId: IdType) => {
-    return MemberService.getBaseUrl(projectId)+"/myinfo";
-  }
+    if (!projectId) {
+      return null;
+    }
+    return MemberService.getBaseUrl(projectId) + "/myinfo";
+  };
 
   static create = async (member: Member, projectId: IdType) => {
     return await axios.post(MemberService.getBaseUrl(projectId), member);

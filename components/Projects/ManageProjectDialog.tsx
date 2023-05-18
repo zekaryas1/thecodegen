@@ -7,6 +7,7 @@ import { DialogProps } from "../../lib/models/InterfaceProps";
 import { Project } from "../../lib/models/Project";
 import { myConfirmPopUp } from "../MyConfirmPopup";
 import { DIALOG_PROPS, PROJECT_DESCRIPTION_MAX_LENGTH } from "../../lib/fixed";
+import Conditional from "../Conditional";
 
 function ManageProjectDialog({
   onClose,
@@ -64,22 +65,25 @@ function ManageProjectDialog({
         />
 
         <div className="flex justify-content-end gap-2">
-          <Button label={data.id ? "Edit" : "Save"} type="submit" />
-          {data.id && (
-            <Button
-              label="Delete"
-              type="button"
-              className="p-button-text p-button-danger"
-              onClick={(event) =>
-                myConfirmPopUp({
-                  event: event,
-                  acceptCallBack: acceptDelete,
-                  additionalMessage:
-                    "Everything related to this project will be deleted, i.e entity, generators...",
-                })
-              }
-            />
-          )}
+          <Button label="Save" type="submit" />
+          <Conditional
+            if={data.id}
+            show={
+              <Button
+                label="Delete"
+                type="button"
+                className="p-button-text p-button-danger"
+                onClick={(event) =>
+                  myConfirmPopUp({
+                    event: event,
+                    acceptCallBack: acceptDelete,
+                    additionalMessage:
+                      "Data related to this will be deleted, i.e entity, generators...",
+                  })
+                }
+              />
+            }
+          />
         </div>
       </form>
     </Dialog>

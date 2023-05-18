@@ -4,6 +4,7 @@ import { Entity, entityToString } from "../../../lib/models/Entity";
 import { EntityService } from "../../../lib/services/EntityService";
 import { Column, ConstraintType } from "../../../lib/models/Column";
 import { ColumnService } from "../../../lib/services/ColumnService";
+import { Column } from "../../../lib/models/Column";
 import { useRouter } from "next/router";
 import EditColumnsDialog from "../../../components/Entities/EditColumnsDialog";
 import ManageEntityDialog from "../../../components/Entities/ManageEntityDialog";
@@ -13,6 +14,7 @@ import AdminOrOwner from "../../../components/AdminOrOwner";
 import EntitiesToolBar from "../../../components/Entities/EntitiesToolBar";
 import MyEditor from "../../../components/MyEditor";
 import { Divider } from "primereact/divider";
+import { EntitiesUtils } from "../../../components/Entities/EntitiesUtils";
 import Flow, { EdgeType, NodeType } from "../../../components/Entities/Flow";
 import { ReactFlowProvider, useReactFlow } from "reactflow";
 import Conditional from "../../../components/Conditional";
@@ -45,73 +47,50 @@ function Entities() {
     });
   }, [entities?.data]);
 
-  const manageEntity = async (entity: Entity) => {
-    if (entity.id) {
-      await EntityService.update(entity, projectId).then((res) => res.data);
-      refreshEntities();
-    } else {
-      const { data: response } = await EntityService.create(
-        entity,
-        projectId as string
-      ).then((res) => res.data);
-      refreshEntities({ ...entities, response });
-    }
-  };
-
-  const deleteEntity = async (id: string) => {
-    await EntityService.delete(id, projectId);
-    refreshEntities({ ...entities.data.filter((it: Entity) => it.id !== id) });
-  };
-
-  const deleteColumn = async (columnId: string) => {
-    await ColumnService.delete(columnId, projectId);
-    refreshEntities();
-  };
-
-  const addNewColumn = async (data: Column) => {
-    await ColumnService.create(data, projectId);
-    refreshEntities();
-  };
-
-  const generateNodes = (entities: Entity[]): NodeType[] => {
-    return entities?.map((it: Entity) => {
-      return {
-        id: it.id || "",
-        type: "textUpdater",
-        position: { x: 0, y: 0 },
-        data: it,
-      };
+  const manageEntity = (entity: Entity) => {
+    EntitiesUtils.manageEntity({
+      projectId: projectId as string,
+      entity: entity,
+      onSuccessfulCreate(response: Entity) {
+        setSelectedEntity(response);
+        refreshEntities({ ...entities, response });
+      },
+      onSuccessfulUpdate() {
+        refreshEntities();
+      },
     });
   };
 
-  const generateEdges = (entities: Entity[]): EdgeType[] => {
-    const getTargetEntityId = (constraintValue: string): string => {
-      const [targetEntityName, targetFieldName] = constraintValue.split(".");
-      const targetEntity = entities.find(
-        (entity) => entity.name === targetEntityName
-      );
-      return targetEntity?.id ?? targetEntityName;
-    };
-
-    const columns = entities.flatMap((entity) => entity.columns ?? []);
-    const edges: EdgeType[] = [];
-
-    for (const column of columns) {
-      if (!column.constraint || !column.entityId) continue;
-      for (const constraint of column.constraint) {
-        if (constraint.type !== "fk") continue;
-
-        edges.push({
-          id: constraint.id,
-          source: column.entityId,
-          target: getTargetEntityId(constraint.value),
-          sourceHandle: `${constraint.name}.s`,
-          targetHandle: `${constraint.value}.t`,
+  const deleteEntity = (id: string) => {
+    EntitiesUtils.deleteEntity({
+      projectId: projectId as string,
+      id: id,
+      onSuccess() {
+        refreshEntities({
+          ...entities.data.filter((it: Entity) => it.id !== id),
         });
-      }
-    }
+      },
+    });
+  };
 
-    return edges;
+  const deleteColumn = (columnId: string) => {
+    EntitiesUtils.deleteColumn({
+      projectId: projectId as string,
+      columnId: columnId,
+      onSuccess() {
+        refreshEntities();
+      },
+    });
+  };
+
+  const addNewColumn = async (data: Column) => {
+    EntitiesUtils.addNewColumn({
+      projectId: projectId as string,
+      data: data,
+      onSuccess() {
+        refreshEntities();
+      },
+    });
   };
 
   if (isLoading) {

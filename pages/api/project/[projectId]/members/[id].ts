@@ -35,7 +35,7 @@ export default async function handler(
         },
       });
 
-      return res.status(HttpStatusCode.NoContent).json({ data: deletedMember });
+      return res.status(200).json({ data: deletedMember });
     }
   }
 
@@ -61,7 +61,7 @@ export default async function handler(
         },
       });
 
-      return res.status(HttpStatusCode.Accepted).json({ data: member });
+      return res.status(200).json({ data: member });
     }
   }
 

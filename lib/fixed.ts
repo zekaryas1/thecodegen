@@ -133,3 +133,8 @@ export const DESTINATIONS = {
     },
   ],
 };
+
+
+export const RECENT_PROJECTS_STORAGE_KEY = "recentProjects";
+
+export const MAX_NO_OF_RECENT_PROJECTS = 7;

@@ -15,6 +15,8 @@ import { useRouter } from "next/router";
 import Conditional from "../../components/Conditional";
 import { ConfirmPopup } from "primereact/confirmpopup";
 import { myConfirmPopUp } from "../../components/MyConfirmPopup";
+import { InvitationsUtils } from "../../components/Invitations/InvitationsUtils";
+import { ProjectUtils } from "../../components/Projects/ProjectUtils";
 
 function ProjectInvitations() {
   const {
@@ -25,20 +27,25 @@ function ProjectInvitations() {
   const { data: session } = useSession();
   const [filters, setFilters] = useFilters();
 
-  const acceptInvitation = async (member: Member) => {
-    await InvitationService.update({
-      ...member,
-      status: MemberStatus.ACCEPTED,
+  const acceptInvitation = (member: Member) => {
+    InvitationsUtils.acceptInvitation({
+      member: member,
+      onSuccess() {
+        if (member.project?.id) {
+          ProjectUtils.saveToRecentProjects(member.project.id);
+        }
+        refreshInvitations();
+      },
     });
-    refreshInvitations();
   };
 
-  const rejectInvitation = async (member: Member) => {
-    await InvitationService.update({
-      ...member,
-      status: MemberStatus.REJECTED,
+  const rejectInvitation = (member: Member) => {
+    InvitationsUtils.rejectInvitation({
+      member: member,
+      onSuccess() {
+        refreshInvitations();
+      },
     });
-    refreshInvitations();
   };
 
   const actionBody = (data: Member) => {

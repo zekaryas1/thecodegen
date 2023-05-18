@@ -16,19 +16,15 @@ export default async function handler(
 
   //for frontend to check if a user is admin
   if (req.method == "GET") {
-    if (
-      await isUserAdminOrOwnerMember(projectId as string, loggedInUserEmail)
-    ) {
-      const member = await prisma.member.findFirst({
-        where: {
-          inviteeEmail: loggedInUserEmail,
-          projectId: projectId as string,
-          status: MemberStatus.ACCEPTED,
-        },
-      });
+    const member = await prisma.member.findFirst({
+      where: {
+        inviteeEmail: loggedInUserEmail,
+        projectId: projectId as string,
+        status: MemberStatus.ACCEPTED,
+      },
+    });
 
-      return res.status(HttpStatusCode.Ok).json({ data: member });
-    }
+    return res.status(200).json({ data: member });
   }
 
   return res.status(HttpStatusCode.MethodNotAllowed).json({

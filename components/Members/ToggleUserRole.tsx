@@ -4,7 +4,7 @@ import { UserRole } from "../../lib/models/User";
 
 interface ToggleRoleProps {
   oldRole: UserRole;
-  onClick: (newRole: UserRole) => {};
+  onClick: (newRole: UserRole) => void;
 }
 
 const MakeAdmin = ({ onClick }: Pick<ToggleRoleProps, "onClick">) => {

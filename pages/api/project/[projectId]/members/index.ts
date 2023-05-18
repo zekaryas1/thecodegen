@@ -50,7 +50,7 @@ export default async function handler(
           },
         });
 
-        return res.status(HttpStatusCode.Created).json({ data: newMember });
+        return res.status(200).json({ data: newMember });
       } catch (error) {
         if (error instanceof Prisma.PrismaClientKnownRequestError) {
           if (error.code === "P2002") {

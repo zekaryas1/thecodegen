@@ -18,11 +18,8 @@ function MyEditor({
 }: MyEditorProps) {
   const options: any = {
     automaticLayout: true,
+    readOnly: isReadOnly ? true : false,
   };
-
-  if (isReadOnly) {
-    options.readOnly = true;
-  }
 
   return (
     <Editor

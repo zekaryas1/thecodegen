@@ -133,7 +133,7 @@ function Home() {
       {blocks({
         image: "main.jpeg",
         title: "About",
-        note: "Codegen is a programmable code-generation tool based on the Lquid template engine.It allows developers to create custom templates for generating code snippets, files, or entire projects from various data schema.Codegen also provides features such as user managment, syntax highlighting, and formatting to make the code-generation process easier and faster.",
+        note: "Codegen is a programmable code-generation tool based on the Liquid template engine.It allows developers to create custom templates for generating code snippets, files, or entire projects from various data schema.Codegen also provides features such as user management, syntax highlighting, and formatting to make the code-generation process easier and faster.",
         imagePosition: "left",
       })}
 

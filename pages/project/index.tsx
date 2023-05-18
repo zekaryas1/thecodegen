@@ -30,32 +30,42 @@ const Projects: NextPageWithLayout = () => {
   const [recentProjects, setRecentProjects] = useState<Project[]>();
 
   useEffect(() => {
-    const recentProjects = async () => {
-      const output = await ProjectUtils.loadRecentProjects();
-      setRecentProjects(output);
+    const getAndSetRecentProjects = async () => {
+      const recentProjects = await ProjectUtils.loadRecentProjects();
+      setRecentProjects(recentProjects);
     };
-    recentProjects();
-  }, []);
+    getAndSetRecentProjects();
+  }, [projects?.data]);
 
   /**
-   * Manages a project. If the project is new, it creates a new project. If the project is existing, it updates the project.
+   * Manages a project. If the project is new, it creates a new project.
+   * If the project is existing, it updates the project.
    * @param {Project} project - The project object to be displayed.
    */
-  const manageProject = async (project: Project) => {
-    if (project.id) {
-      await ProjectService.update(project).then((res) => res.data);
-      refreshProjects();
-    } else {
-      const response = await ProjectService.create(project).then(
-        (res) => res.data
-      );
-      refreshProjects({ ...projects, response });
-    }
+  const manageProject = (project: Project) => {
+    ProjectUtils.manageProject({
+      project: project,
+      onSuccessfulCreation(response) {
+        if (response.id) {
+          ProjectUtils.saveToRecentProjects(response.id);
+        }
+        refreshProjects({ ...projects, response });
+      },
+      onSuccessfulUpdate(response) {
+        refreshProjects();
+      },
+    });
   };
 
-  const deleteProject = async (id: string) => {
-    await ProjectService.delete(id);
-    refreshProjects({ ...projects.data.filter((it: Project) => it.id !== id) });
+  const deleteProject = (id: string) => {
+    ProjectUtils.deleteProject({
+      id: id,
+      onSuccess() {
+        refreshProjects({
+          ...projects.data.filter((it: Project) => it.id !== id),
+        });
+      },
+    });
   };
 
   const onDialogClose = () => {
@@ -135,19 +145,15 @@ const Projects: NextPageWithLayout = () => {
 Projects.getLayout = function PageLayout(page: ReactElement) {
   const router = useRouter();
 
-  const confirm1 = () => {
-    const accept = () => {
-      signOut();
-    };
-
-    const reject = () => {};
-
+  const confirmLogout = () => {
     confirmDialog({
       message: "Are you sure you want to logout?",
       header: "Confirmation",
       icon: "pi pi-exclamation-triangle",
-      accept,
-      reject,
+      accept() {
+        signOut();
+      },
+      reject() {},
     });
   };
 
@@ -158,9 +164,9 @@ Projects.getLayout = function PageLayout(page: ReactElement) {
         title="What are you working on today?"
         subTitle="Select or create a project to get started"
         listOfDestinations={DESTINATIONS.fromProject}
-        onDestionationsClick={(destination) => {
+        onDestinationsClick={(destination) => {
           if (destination === "Logout") {
-            confirm1();
+            confirmLogout();
           } else {
             router.push("/project/invitations");
           }
