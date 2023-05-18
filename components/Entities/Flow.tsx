@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import ReactFlow, {
   addEdge,
   useEdgesState,
@@ -6,11 +6,15 @@ import ReactFlow, {
   MiniMap,
   Controls,
   Background,
+  Panel,
+  useReactFlow,
 } from "reactflow";
 
 import "reactflow/dist/style.css";
 import FlowSchemaUI from "./FlowSchemaUI";
 import { Entity } from "../../lib/models/Entity";
+import { Button } from "primereact/button";
+import { Options } from "react-markdown";
 
 // const initialNodes = [
 //   {
@@ -54,26 +58,77 @@ export interface EdgeType {
   target: string;
   sourceHandle: string;
   targetHandle: string;
+  [name: string]: any;
 }
 
 interface FlowProps {
   nodes: NodeType[];
   edges: EdgeType[];
+  onEdgeConnection: (params: EdgeType, onSuccess: () => void) => void;
 }
 
-function Flow({ nodes: initialNodes, edges: initialEdges }: FlowProps) {
+const flowKey = "example-flow";
+
+function Flow({
+  nodes: initialNodes,
+  edges: initialEdges,
+  onEdgeConnection,
+}: FlowProps) {
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
   const nodeTypes = useMemo(() => ({ textUpdater: FlowSchemaUI }), []);
+  const [rfInstance, setRfInstance] = useState<any>(null);
+  const { setViewport } = useReactFlow();
 
   const reactFlowWrapper = useRef(null);
 
+  const onRestore = useCallback(() => {
+    const restoreFlow = async () => {
+      const flow = JSON.parse(localStorage.getItem(flowKey) || "null");
+
+      if (flow) {
+        const { x = 0, y = 0, zoom = 1 } = flow.viewport;
+
+        const updatedNodes = nodes.map((node) => {
+          const isSaved = flow.nodes.find((it: any) => it.id == node.id);
+          if (isSaved) {
+            return {
+              ...isSaved,
+              data: node.data,
+            };
+          }
+          return node;
+        });
+
+        setNodes(updatedNodes || []);
+        setEdges(flow.edges || []);
+        setViewport({ x, y, zoom });
+      }
+    };
+
+    restoreFlow();
+  }, [nodes, setEdges, setNodes, setViewport]);
+
+  useEffect(() => {
+    onRestore();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const onConnect = useCallback(
     (params: any) => {
-      return setEdges((eds) => addEdge(params, eds));
+      return onEdgeConnection(params, () => {
+        setEdges((eds) => addEdge(params, eds));
+      });
     },
-    [setEdges]
+    [onEdgeConnection, setEdges]
   );
+
+  const onSave = useCallback(() => {
+    if (rfInstance) {
+      const flow = rfInstance.toObject();
+      localStorage.setItem(flowKey, JSON.stringify(flow));
+    }
+  }, [rfInstance]);
 
   return (
     <>
@@ -88,8 +143,20 @@ function Flow({ nodes: initialNodes, edges: initialEdges }: FlowProps) {
           onEdgesChange={onEdgesChange}
           onConnect={onConnect}
           nodeTypes={nodeTypes}
-          // fitView
+          onInit={setRfInstance}
         >
+          <Panel position="top-right">
+            <Button
+              label="Save"
+              className="p-button p-button-sm p-button-outlined mr-3"
+              onClick={onSave}
+            />
+            <Button
+              label="Restore"
+              className="p-button p-button-sm p-button-outlined"
+              onClick={onRestore}
+            />
+          </Panel>
           <Controls />
           <MiniMap />
           <Background gap={12} size={1} />
