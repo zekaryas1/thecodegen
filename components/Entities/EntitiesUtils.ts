@@ -1,3 +1,4 @@
+import { MarkerType } from "reactflow";
 import { Column } from "../../lib/models/Column";
 import { Entity } from "../../lib/models/Entity";
 import { ColumnService } from "../../lib/services/ColumnService";
@@ -77,7 +78,7 @@ export class EntitiesUtils {
       return targetEntity?.id ?? targetEntityName;
     };
 
-    const columns = entities.flatMap((entity) => entity.columns ?? []);
+    const columns = entities?.flatMap((entity) => entity.columns ?? []);
     const edges: EdgeType[] = [];
 
     for (const column of columns) {
@@ -89,8 +90,12 @@ export class EntitiesUtils {
           id: constraint.id,
           source: column.entityId,
           target: getTargetEntityId(constraint.value),
-          sourceHandle: `${constraint.name}.s`,
-          targetHandle: `${constraint.value}.t`,
+          sourceHandle: constraint.name,
+          targetHandle: constraint.value,
+          type: 'smoothstep',
+          markerEnd: {
+            type: MarkerType.ArrowClosed,
+          },
         });
       }
     }
