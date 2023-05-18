@@ -14,37 +14,6 @@ import "reactflow/dist/style.css";
 import FlowSchemaUI from "./FlowSchemaUI";
 import { Entity } from "../../lib/models/Entity";
 import { Button } from "primereact/button";
-import { Options } from "react-markdown";
-
-// const initialNodes = [
-//   {
-//     id: "1",
-//     type: "textUpdater",
-//     position: { x: 0, y: 0 },
-//     data: {
-//       name: "User",
-//       columns: [
-//         {
-//           name: "name",
-//           type: "String",
-//         },
-//         {
-//           name: "age",
-//           type: "Number",
-//         },
-//       ],
-//     },
-//   },
-// ];
-// const initialEdges = [
-//   {
-//     id: "e1-1",
-//     source: "e31511e4-0771-4f9e-b683-e46128b3d992",
-//     target: "70b23402-ea01-44c8-8a69-617082cbbc56",
-//     sourceHandle: "Users.id.s",
-//     targetHandle: "Posts.user_id.t",
-//   },
-// ];
 export interface NodeType {
   id: string;
   type: string;
@@ -130,7 +99,7 @@ function Flow({
     }
   }, [rfInstance]);
 
-  const onRestart = useCallback(() => {
+  const syncEdges = useCallback(() => {
     setEdges(initialEdges);
 
     onSave();
@@ -171,7 +140,7 @@ function Flow({
               title="Pull latest edge data to layout"
               icon="pi pi-sync"
               className="p-button p-button-sm p-button-outlined p-button-info"
-              onClick={onRestart}
+              onClick={syncEdges}
             />
           </Panel>
           <Controls />
