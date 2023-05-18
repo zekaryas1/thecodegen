@@ -14,6 +14,7 @@ import "reactflow/dist/style.css";
 import FlowSchemaUI from "./FlowSchemaUI";
 import { Entity } from "../../lib/models/Entity";
 import { Button } from "primereact/button";
+
 export interface NodeType {
   id: string;
   type: string;
@@ -109,7 +110,7 @@ function Flow({
     <>
       <div
         ref={reactFlowWrapper}
-        className="w-full h-full border-1 border-gray-50"
+        className="w-full h-full border-1 border-gray-600"
       >
         <ReactFlow
           nodes={nodes}
