@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import useSWR from "swr";
 import { Entity, entityToString } from "../../../lib/models/Entity";
 import { EntityService } from "../../../lib/services/EntityService";
-import { Column } from "../../../lib/models/Column";
+import { Column, ConstraintType } from "../../../lib/models/Column";
 import { ColumnService } from "../../../lib/services/ColumnService";
 import { useRouter } from "next/router";
 import EditColumnsDialog from "../../../components/Entities/EditColumnsDialog";
@@ -13,8 +13,8 @@ import AdminOrOwner from "../../../components/AdminOrOwner";
 import EntitiesToolBar from "../../../components/Entities/EntitiesToolBar";
 import MyEditor from "../../../components/MyEditor";
 import { Divider } from "primereact/divider";
-import Flow from "../../../components/Entities/Flow";
-import { ReactFlowProvider } from "reactflow";
+import Flow, { EdgeType, NodeType } from "../../../components/Entities/Flow";
+import { ReactFlowProvider, useReactFlow } from "reactflow";
 import Conditional from "../../../components/Conditional";
 
 function Entities() {
@@ -73,6 +73,47 @@ function Entities() {
     refreshEntities();
   };
 
+  const generateNodes = (entities: Entity[]): NodeType[] => {
+    return entities?.map((it: Entity) => {
+      return {
+        id: it.id || "",
+        type: "textUpdater",
+        position: { x: 0, y: 0 },
+        data: it,
+      };
+    });
+  };
+
+  const generateEdges = (entities: Entity[]): EdgeType[] => {
+    const getTargetEntityId = (constraintValue: string): string => {
+      const [targetEntityName, targetFieldName] = constraintValue.split(".");
+      const targetEntity = entities.find(
+        (entity) => entity.name === targetEntityName
+      );
+      return targetEntity?.id ?? targetEntityName;
+    };
+
+    const columns = entities.flatMap((entity) => entity.columns ?? []);
+    const edges: EdgeType[] = [];
+
+    for (const column of columns) {
+      if (!column.constraint || !column.entityId) continue;
+      for (const constraint of column.constraint) {
+        if (constraint.type !== "fk") continue;
+
+        edges.push({
+          id: constraint.id,
+          source: column.entityId,
+          target: getTargetEntityId(constraint.value),
+          sourceHandle: `${constraint.name}.s`,
+          targetHandle: `${constraint.value}.t`,
+        });
+      }
+    }
+
+    return edges;
+  };
+
   if (isLoading) {
     return <LoadingIndicator />;
   }
@@ -118,14 +159,8 @@ function Entities() {
             show={
               <ReactFlowProvider>
                 <Flow
-                  data={entities.data.map((it: Entity) => {
-                    return {
-                      id: it.id,
-                      type: "textUpdater",
-                      position: { x: 0, y: 0 },
-                      data: it,
-                    };
-                  })}
+                  nodes={generateNodes(entities.data)}
+                  edges={generateEdges(entities.data)}
                 />
               </ReactFlowProvider>
             }

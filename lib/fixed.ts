@@ -22,6 +22,7 @@ export const DATA_TYPES = [
   { name: "Boolean", code: "boolean" },
   { name: "Date", code: "date" },
   { name: "Array", code: "array" },
+  { name: "Foreign Key", code: "fk" },
 ];
 
 export const MARKDOWN_INDICATOR = '[//]: # "markdown"';
