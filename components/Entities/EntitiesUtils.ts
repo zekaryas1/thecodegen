@@ -78,7 +78,7 @@ export class EntitiesUtils {
       return targetEntity?.id ?? targetEntityName;
     };
 
-    const columns = entities?.flatMap((entity) => entity.columns ?? []);
+    const columns = entities?.flatMap((entity) => entity.columns ?? []) || [];
     const edges: EdgeType[] = [];
 
     for (const column of columns) {
