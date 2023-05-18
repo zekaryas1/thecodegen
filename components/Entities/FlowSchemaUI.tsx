@@ -54,7 +54,7 @@ function ROW({
         type="source"
         position={Position.Right}
         id={`${entityName}.${column.name}.s`}
-        style={{ top: 42.5 * index + 60 }}
+        style={{ top: 42.5 * index + 75 }}
       />
       <p>
         {column.name} - {column.type}
@@ -63,7 +63,7 @@ function ROW({
         type="target"
         position={Position.Left}
         id={`${entityName}.${column.name}.t`}
-        style={{ top: 42.5 * index + 60 }}
+        style={{ top: 42.5 * index + 75 }}
       />
     </>
   );
