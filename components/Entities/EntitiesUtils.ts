@@ -2,6 +2,7 @@ import { Column } from "../../lib/models/Column";
 import { Entity } from "../../lib/models/Entity";
 import { ColumnService } from "../../lib/services/ColumnService";
 import { EntityService } from "../../lib/services/EntityService";
+import { EdgeType, NodeType } from "./Flow";
 
 export class EntitiesUtils {
   static manageEntity = async (input: {
@@ -54,5 +55,46 @@ export class EntitiesUtils {
     if (res.statusText === "OK") {
       input.onSuccess();
     }
+  };
+
+  static generateNodes = (entities: Entity[]): NodeType[] => {
+    return entities?.map((it: Entity) => {
+      return {
+        id: it.id || "",
+        type: "textUpdater",
+        position: { x: 0, y: 0 },
+        data: it,
+      };
+    });
+  };
+
+  static generateEdges = (entities: Entity[]): EdgeType[] => {
+    const getTargetEntityId = (constraintValue: string): string => {
+      const [targetEntityName, targetFieldName] = constraintValue.split(".");
+      const targetEntity = entities.find(
+        (entity) => entity.name === targetEntityName
+      );
+      return targetEntity?.id ?? targetEntityName;
+    };
+
+    const columns = entities.flatMap((entity) => entity.columns ?? []);
+    const edges: EdgeType[] = [];
+
+    for (const column of columns) {
+      if (!column.constraint || !column.entityId) continue;
+      for (const constraint of column.constraint) {
+        if (constraint.type !== "fk") continue;
+
+        edges.push({
+          id: constraint.id,
+          source: column.entityId,
+          target: getTargetEntityId(constraint.value),
+          sourceHandle: `${constraint.name}.s`,
+          targetHandle: `${constraint.value}.t`,
+        });
+      }
+    }
+
+    return edges;
   };
 }
