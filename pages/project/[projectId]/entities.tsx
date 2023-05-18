@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import useSWR from "swr";
 import { Entity, entityToString } from "../../../lib/models/Entity";
 import { EntityService } from "../../../lib/services/EntityService";
-import { Column } from "../../../lib/models/Column";
+import { Column, ConstraintType } from "../../../lib/models/Column";
 import { useRouter } from "next/router";
 import EditColumnsDialog from "../../../components/Entities/EditColumnsDialog";
 import ManageEntityDialog from "../../../components/Entities/ManageEntityDialog";
@@ -91,6 +91,31 @@ function Entities() {
     });
   };
 
+  const addNewConstraint = (edgeData: EdgeType, onSuccess: () => void) => {
+    const [_, columnName, __] = edgeData.sourceHandle.split(".");
+
+    const entity = entities.data.find(
+      (entity: Entity) => entity.id === edgeData.source
+    );
+    const column: Column = entity?.columns?.find(
+      (col: Column) => col.name === columnName
+    );
+
+    if (column && column.constraint) {
+      column.constraint.push({
+        id: "",
+        type: "fk",
+        name: edgeData.sourceHandle,
+        value: edgeData.targetHandle,
+        draft: false,
+      });
+    }
+    column.entityId = edgeData.source;
+
+    addNewColumn(column);
+    onSuccess();
+  };
+
   if (isLoading) {
     return <LoadingIndicator />;
   }
@@ -138,6 +163,7 @@ function Entities() {
                 <Flow
                   nodes={EntitiesUtils.generateNodes(entities.data)}
                   edges={EntitiesUtils.generateEdges(entities.data)}
+                  onEdgeConnection={addNewConstraint}
                 />
               </ReactFlowProvider>
             }
