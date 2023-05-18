@@ -2,8 +2,6 @@ import { useEffect, useState } from "react";
 import useSWR from "swr";
 import { Entity, entityToString } from "../../../lib/models/Entity";
 import { EntityService } from "../../../lib/services/EntityService";
-import { Column, ConstraintType } from "../../../lib/models/Column";
-import { ColumnService } from "../../../lib/services/ColumnService";
 import { Column } from "../../../lib/models/Column";
 import { useRouter } from "next/router";
 import EditColumnsDialog from "../../../components/Entities/EditColumnsDialog";
@@ -16,7 +14,7 @@ import MyEditor from "../../../components/MyEditor";
 import { Divider } from "primereact/divider";
 import { EntitiesUtils } from "../../../components/Entities/EntitiesUtils";
 import Flow, { EdgeType, NodeType } from "../../../components/Entities/Flow";
-import { ReactFlowProvider, useReactFlow } from "reactflow";
+import { ReactFlowProvider } from "reactflow";
 import Conditional from "../../../components/Conditional";
 
 function Entities() {
@@ -138,8 +136,8 @@ function Entities() {
             show={
               <ReactFlowProvider>
                 <Flow
-                  nodes={generateNodes(entities.data)}
-                  edges={generateEdges(entities.data)}
+                  nodes={EntitiesUtils.generateNodes(entities.data)}
+                  edges={EntitiesUtils.generateEdges(entities.data)}
                 />
               </ReactFlowProvider>
             }
