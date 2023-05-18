@@ -11,7 +11,12 @@ interface FlowSchemaUIProps {
 function FlowSchemaUI({ data }: FlowSchemaUIProps) {
   return (
     <div className="bg-gray-700 p-2 w-12rem">
-      <h3 className="mb-2">{data.name}</h3>
+      <div className="flex justify-content-between align-items-center mb-2 p-2 bg-gray-800">
+        <i className="pi pi-circle" style={{ fontSize: "0.7rem" }} />
+        <h3>{data.name}</h3>
+        <i className="pi pi-arrow-right" style={{ fontSize: "0.7rem" }} />
+      </div>
+
       {data?.columns?.map(function (column: Column, i: number) {
         return (
           <div key={column.id} className="flex bg-gray-500 mb-2 p-2">
