@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import useSWR from "swr";
 import { Entity, entityToString } from "../../../lib/models/Entity";
 import { EntityService } from "../../../lib/services/EntityService";
-import { Column, ConstraintType } from "../../../lib/models/Column";
+import { Column } from "../../../lib/models/Column";
 import { useRouter } from "next/router";
 import EditColumnsDialog from "../../../components/Entities/EditColumnsDialog";
 import ManageEntityDialog from "../../../components/Entities/ManageEntityDialog";
@@ -13,7 +13,7 @@ import EntitiesToolBar from "../../../components/Entities/EntitiesToolBar";
 import MyEditor from "../../../components/MyEditor";
 import { Divider } from "primereact/divider";
 import { EntitiesUtils } from "../../../components/Entities/EntitiesUtils";
-import Flow, { EdgeType, NodeType } from "../../../components/Entities/Flow";
+import Flow, { EdgeType } from "../../../components/Entities/Flow";
 import { ReactFlowProvider } from "reactflow";
 import Conditional from "../../../components/Conditional";
 
@@ -81,7 +81,7 @@ function Entities() {
     });
   };
 
-  const addNewColumn = async (data: Column) => {
+  const addNewColumn = (data: Column) => {
     EntitiesUtils.addNewColumn({
       projectId: projectId as string,
       data: data,
@@ -92,27 +92,11 @@ function Entities() {
   };
 
   const addNewConstraint = (edgeData: EdgeType, onSuccess: () => void) => {
-    const [_, columnName, __] = edgeData.sourceHandle.split(".");
-
-    const entity = entities.data.find(
+    const entity = entities.find(
       (entity: Entity) => entity.id === edgeData.source
     );
-    const column: Column = entity?.columns?.find(
-      (col: Column) => col.name === columnName
-    );
-
-    if (column && column.constraint) {
-      column.constraint.push({
-        id: "",
-        type: "fk",
-        name: edgeData.sourceHandle,
-        value: edgeData.targetHandle,
-        draft: false,
-      });
-    }
-    column.entityId = edgeData.source;
-
-    addNewColumn(column);
+    const updatedColumn = EntitiesUtils.getNewColumnForEntity(edgeData, entity);
+    addNewColumn(updatedColumn);
     onSuccess();
   };
 
