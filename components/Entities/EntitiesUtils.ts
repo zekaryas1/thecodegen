@@ -62,7 +62,7 @@ export class EntitiesUtils {
     return entities?.map((it: Entity) => {
       return {
         id: it.id || "",
-        type: "textUpdater",
+        type: "MyCustomSchemaUI",
         position: { x: 0, y: 0 },
         data: it,
       };
@@ -103,8 +103,13 @@ export class EntitiesUtils {
     return edges;
   };
 
-  //merge new nodes with local nodes and return the result
-  //if node is already saved in memory keep the state except for new data
+  /**
+   * merge new nodes with local nodes and return the result
+   * if node is already saved in memory keep the state except for new data
+   * @param nodes
+   * @param flow
+   * @returns synced nodes
+   */
   static mergeFlowNodes = (nodes: any[], flow: any) => {
     return nodes.map((node) => {
       const isSaved = flow.nodes.find((it: any) => it.id == node.id);
@@ -116,5 +121,32 @@ export class EntitiesUtils {
       }
       return node;
     });
+  };
+
+  /**
+   * what happened: an edge has been created between two nodes
+   * find the column that needs to be updated and add a new fk constraints to it existing constraints
+   * @param edgeData
+   * @param entity
+   * @returns the updated constraints list
+   */
+  static getNewColumnForEntity = (edgeData: EdgeType, entity: Entity) => {
+    const [_, columnName, __] = edgeData.sourceHandle.split(".");
+
+    const column: Column =
+      entity?.columns?.find((col: Column) => col.name === columnName) ||
+      <Column>{};
+
+    if (column && column.constraint) {
+      column.constraint.push({
+        id: "",
+        type: "fk",
+        name: edgeData.sourceHandle,
+        value: edgeData.targetHandle,
+        draft: false,
+      });
+    }
+    column.entityId = edgeData.source;
+    return column;
   };
 }

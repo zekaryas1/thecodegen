@@ -54,7 +54,7 @@ function Flow({
 }: FlowProps) {
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
-  const nodeTypes = useMemo(() => ({ textUpdater: FlowSchemaUI }), []);
+  const nodeTypes = useMemo(() => ({ MyCustomSchemaUI: FlowSchemaUI }), []);
   const [rfInstance, setRfInstance] = useState<any>(null);
   const { setViewport } = useReactFlow();
   const toastContext = useContext(ToastContext);
