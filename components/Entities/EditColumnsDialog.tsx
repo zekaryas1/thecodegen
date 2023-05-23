@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import { Dialog } from "primereact/dialog";
 import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
@@ -33,22 +33,26 @@ function EditColumnsDialog({
     };
   };
 
-  const removeAndAddNewConstraint = (newConstraint: ConstraintType) => {
-    const prevConstraints = (selectedColumn.constraint || []).filter(
-      (it) => it.id != newConstraint.id
-    );
+  const removeAndAddNewConstraint = useCallback(
+    (newConstraint: ConstraintType) => {
+      const prevConstraints = (selectedColumn.constraint || []).filter(
+        (it) => it.id != newConstraint.id
+      );
 
-    setSelectedColumn({
-      ...selectedColumn,
-      constraint: [newConstraint, ...prevConstraints],
-    });
-  };
+      setSelectedColumn({
+        ...selectedColumn,
+        constraint: [newConstraint, ...prevConstraints],
+      });
+    },
+    [selectedColumn]
+  );
 
   const submitForm = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     selectedColumn.entityId = data.id;
     selectedColumn.constraint = selectedColumn.constraint?.filter(
-      (constraint) => constraint.draft === undefined || !constraint.draft
+      (constraint) =>
+        constraint.name && (constraint.draft === undefined || !constraint.draft)
     );
 
     onSubmit(selectedColumn);
@@ -60,54 +64,6 @@ function EditColumnsDialog({
       onDelete(selectedColumn.id);
     }
     onClose();
-  };
-
-  /**
-   * Returns a list of AttributeColumns for all non-draft constraints in the selectedColumn.
-   *
-   * @returns {JSX.Element} The list of AttributeColumns.
-   */
-
-  const getTrackedConstraints = (): JSX.Element => {
-    return (
-      <>
-        <p>Tracked constraints</p>
-        {(selectedColumn.constraint || [])
-          .filter((it) => it.draft == undefined || !it.draft)
-          .map((constraint) => {
-            return (
-              <AttributeColumns
-                key={constraint.id}
-                data={constraint}
-                onChangeClick={removeAndAddNewConstraint}
-              />
-            );
-          })}
-      </>
-    );
-  };
-
-  /**
-   * Returns a list of AttributeColumns for all draft constraints in the selectedColumn.
-   * @returns {JSX.Element} The list of AttributeColumns for all non-draft constraints in the selectedColumn.
-   */
-  const getDraftConstraints = (): JSX.Element => {
-    return (
-      <>
-        <p>Draft constraints</p>
-        {(selectedColumn.constraint || [])
-          .filter((it) => it.draft)
-          .map((constraint) => {
-            return (
-              <AttributeColumns
-                key={constraint.id}
-                data={constraint}
-                onChangeClick={removeAndAddNewConstraint}
-              />
-            );
-          })}
-      </>
-    );
   };
 
   return (
@@ -170,9 +126,15 @@ function EditColumnsDialog({
           />
         </div>
 
-        {getTrackedConstraints()}
+        <TrackedConstraints
+          constraints={selectedColumn.constraint || []}
+          onChangeClick={removeAndAddNewConstraint}
+        />
 
-        {getDraftConstraints()}
+        <DraftConstraints
+          constraints={selectedColumn.constraint || []}
+          onChangeClick={removeAndAddNewConstraint}
+        />
 
         <div className="flex">
           <Button
@@ -204,5 +166,65 @@ function EditColumnsDialog({
     </Dialog>
   );
 }
+
+/**
+ * Returns a list of AttributeColumns for all non-draft constraints in the selectedColumn.
+ *
+ * @returns {JSX.Element} The list of AttributeColumns.
+ */
+
+const TrackedConstraints = ({
+  constraints,
+  onChangeClick,
+}: {
+  constraints: ConstraintType[];
+  onChangeClick: (constraint: ConstraintType) => void;
+}): JSX.Element => {
+  return (
+    <>
+      <p>Tracked constraints</p>
+      {constraints
+        .filter((it) => it.draft == undefined || !it.draft)
+        .map((constraint) => {
+          return (
+            <AttributeColumns
+              key={constraint.id}
+              data={constraint}
+              onChangeClick={onChangeClick}
+            />
+          );
+        })}
+    </>
+  );
+};
+
+/**
+ * Returns a list of AttributeColumns for all draft constraints in the selectedColumn.
+ * @returns {JSX.Element} The list of AttributeColumns for all non-draft constraints in the selectedColumn.
+ */
+const DraftConstraints = ({
+  constraints,
+  onChangeClick,
+}: {
+  constraints: ConstraintType[];
+  onChangeClick: (constraint: ConstraintType) => void;
+}): JSX.Element => {
+  return (
+    <>
+      <p>Draft constraints</p>
+      {constraints
+        .filter((it) => it.draft)
+        .map((constraint) => {
+          return (
+            <AttributeColumns
+              key={constraint.id}
+              data={constraint}
+              onChangeClick={onChangeClick}
+            />
+          );
+        })}
+    </>
+  );
+};
 
 export default EditColumnsDialog;
