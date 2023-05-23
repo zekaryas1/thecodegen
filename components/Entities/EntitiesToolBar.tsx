@@ -2,7 +2,6 @@ import { Button } from "primereact/button";
 import { Entity } from "../../lib/models/Entity";
 import Conditional from "../Conditional";
 import { SelectButton } from "primereact/selectbutton";
-import { useState } from "react";
 
 interface EntitiesToolBarProps {
   currentEntity: Entity;
