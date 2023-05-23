@@ -14,6 +14,8 @@ import "reactflow/dist/style.css";
 import FlowSchemaUI from "./FlowSchemaUI";
 import { Entity } from "../../lib/models/Entity";
 import { Button } from "primereact/button";
+import { FLOW_KEY } from "../../lib/fixed";
+import { EntitiesUtils } from "./EntitiesUtils";
 
 export interface NodeType {
   id: string;
@@ -37,8 +39,6 @@ interface FlowProps {
   onEdgeConnection: (params: EdgeType, onSuccess: () => void) => void;
 }
 
-const flowKey = "example-flow";
-
 function Flow({
   nodes: initialNodes,
   edges: initialEdges,
@@ -54,23 +54,14 @@ function Flow({
 
   const onRestore = useCallback(() => {
     const restoreFlow = async () => {
-      const flow = JSON.parse(localStorage.getItem(flowKey) || "null");
+      const flow = JSON.parse(localStorage.getItem(FLOW_KEY) || "null");
 
       if (flow) {
         const { x = 0, y = 0, zoom = 1 } = flow.viewport;
 
-        const updatedNodes = nodes.map((node) => {
-          const isSaved = flow.nodes.find((it: any) => it.id == node.id);
-          if (isSaved) {
-            return {
-              ...isSaved,
-              data: node.data,
-            };
-          }
-          return node;
-        });
+        const mergedNodes = EntitiesUtils.mergeFlowNodes(nodes, flow);
 
-        setNodes(updatedNodes || []);
+        setNodes(mergedNodes || []);
         setEdges(flow.edges || []);
         setViewport({ x, y, zoom });
       }
@@ -96,13 +87,12 @@ function Flow({
   const onSave = useCallback(() => {
     if (rfInstance) {
       const flow = rfInstance.toObject();
-      localStorage.setItem(flowKey, JSON.stringify(flow));
+      localStorage.setItem(FLOW_KEY, JSON.stringify(flow));
     }
   }, [rfInstance]);
 
   const syncEdges = useCallback(() => {
     setEdges(initialEdges);
-
     onSave();
   }, [initialEdges, onSave, setEdges]);
 

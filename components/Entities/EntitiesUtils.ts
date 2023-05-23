@@ -92,7 +92,7 @@ export class EntitiesUtils {
           target: getTargetEntityId(constraint.value),
           sourceHandle: constraint.name,
           targetHandle: constraint.value,
-          type: 'smoothstep',
+          type: "smoothstep",
           markerEnd: {
             type: MarkerType.ArrowClosed,
           },
@@ -101,5 +101,20 @@ export class EntitiesUtils {
     }
 
     return edges;
+  };
+
+  //merge new nodes with local nodes and return the result
+  //if node is already saved in memory keep the state except for new data
+  static mergeFlowNodes = (nodes: any[], flow: any) => {
+    return nodes.map((node) => {
+      const isSaved = flow.nodes.find((it: any) => it.id == node.id);
+      if (isSaved) {
+        return {
+          ...isSaved,
+          data: node.data,
+        };
+      }
+      return node;
+    });
   };
 }
