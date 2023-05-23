@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import useSWR from "swr";
 import { Generator } from "../../../lib/models/Generator";
 import { Template } from "../../../lib/models/Template";
@@ -9,7 +9,6 @@ import { EntityService } from "../../../lib/services/EntityService";
 import ManageGeneratorDialog from "../../../components/Codes/ManageGeneratorDialog";
 import GeneratorListComponent from "../../../components/Codes/GeneratorList";
 import { LoadingIndicator } from "../../../components/LoadingIndicator";
-import { Toast } from "primereact/toast";
 import { Splitter, SplitterPanel } from "primereact/splitter";
 import MyEditor from "../../../components/MyEditor";
 import CodesToolBar from "../../../components/Codes/CodesToolBar";
@@ -19,6 +18,7 @@ import remarkGfm from "remark-gfm";
 import "github-markdown-css";
 import Conditional from "../../../components/Conditional";
 import { CodeUtils } from "../../../components/Codes/CodesUtils";
+import { ToastContext } from "../../../components/MyToast";
 
 function Codes() {
   const router = useRouter();
@@ -41,7 +41,7 @@ function Codes() {
   const [generatedCode, setGeneratedCode] = useState("");
   const [showMarkDown, setShowMarkDown] = useState(false);
 
-  const toast = useRef(null);
+  const toastContext = useContext(ToastContext);
 
   useEffect(() => {
     setSelectedGenerator((prevState) => {
@@ -65,15 +65,6 @@ function Codes() {
     });
   };
 
-  const show = (message: {
-    severity: "success" | "error";
-    summary: string;
-    detail: string;
-  }) => {
-    //@ts-ignore
-    toast.current.show(message);
-  };
-
   /**
    * Call api to Updates a template and displays a success message if successful
    * @param {Template} newTemplate - The new template to update
@@ -88,19 +79,11 @@ function Codes() {
       projectId: projectId as string,
       body: selectedGenerator.template.body || "",
       onSuccess() {
-        show({
-          severity: "success",
-          summary: "Template saved",
-          detail: "Template has been saved successfully",
-        });
+        toastContext?.showSuccess("Template has been saved successfully");
         refreshGenerators();
       },
       onError() {
-        show({
-          severity: "error",
-          summary: "Template can not be saved",
-          detail: "Something went wrong, is database ok?",
-        });
+        toastContext?.showError("Something went wrong, is database ok?");
       },
     });
   };
@@ -197,7 +180,6 @@ function Codes() {
       <Divider />
 
       <div className="grid min-h-screen p-2 mb-4">
-        <Toast ref={toast} />
         <div className="col-2 p-0">
           <GeneratorListComponent
             generators={generators?.data}

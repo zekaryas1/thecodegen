@@ -4,7 +4,7 @@ import "primereact/resources/themes/mdc-dark-indigo/theme.css"; //app theme i.e 
 import "primereact/resources/primereact.min.css"; //core css
 import "primeicons/primeicons.css"; //icons
 import "primeflex/primeflex.css"; //utility-css
-import { ReactElement, ReactNode, useRef } from "react";
+import { ReactElement, ReactNode, createContext, useRef } from "react";
 import { NextPage } from "next";
 import { SWRConfig } from "swr";
 import axios from "axios";
@@ -15,6 +15,7 @@ import localFont from "@next/font/local";
 import MyHead from "../components/MyHead";
 import Footer from "../components/Layouts/Footer";
 import { GLOBAL_STYLES } from "../lib/fixed";
+import { MyToast, ToastContext } from "../components/MyToast";
 
 const myFont = localFont({ src: "./fonts/Dank Mono Regular.otf" });
 
@@ -31,14 +32,23 @@ export default function App({
   Component,
   pageProps: { session, ...pageProps },
 }: AppPropsWithLayout) {
-  const toast = useRef(null);
+  const toast = useRef<Toast>(null);
 
   const ComponentToUse = (
-    <>
+    <ToastContext.Provider
+      value={{
+        showSuccess: (detail?: string) => {
+          return MyToast.showSuccess(toast, detail);
+        },
+        showError: (detail?: string) => {
+          return MyToast.showSuccess(toast, detail);
+        },
+      }}
+    >
       <MyHead />
       <Toast ref={toast} style={{ zIndex: 1000 }} />
       <Component {...pageProps} />
-    </>
+    </ToastContext.Provider>
   );
 
   const onError = (error: any, key: any) => {

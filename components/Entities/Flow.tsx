@@ -1,4 +1,11 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import ReactFlow, {
   addEdge,
   useEdgesState,
@@ -16,6 +23,7 @@ import { Entity } from "../../lib/models/Entity";
 import { Button } from "primereact/button";
 import { FLOW_KEY } from "../../lib/fixed";
 import { EntitiesUtils } from "./EntitiesUtils";
+import { ToastContext } from "../MyToast";
 
 export interface NodeType {
   id: string;
@@ -49,6 +57,7 @@ function Flow({
   const nodeTypes = useMemo(() => ({ textUpdater: FlowSchemaUI }), []);
   const [rfInstance, setRfInstance] = useState<any>(null);
   const { setViewport } = useReactFlow();
+  const toastContext = useContext(ToastContext);
 
   const reactFlowWrapper = useRef(null);
 
@@ -88,13 +97,15 @@ function Flow({
     if (rfInstance) {
       const flow = rfInstance.toObject();
       localStorage.setItem(FLOW_KEY, JSON.stringify(flow));
+      toastContext?.showSuccess("Layout state saved successfully");
     }
-  }, [rfInstance]);
+  }, [rfInstance, toastContext]);
 
   const syncEdges = useCallback(() => {
     setEdges(initialEdges);
     onSave();
-  }, [initialEdges, onSave, setEdges]);
+    toastContext?.showSuccess("Edges have been updated successfully");
+  }, [initialEdges, onSave, setEdges, toastContext]);
 
   return (
     <>
