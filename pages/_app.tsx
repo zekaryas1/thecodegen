@@ -13,7 +13,6 @@ import MyLayout from "../components/Layouts/MyLayout";
 import { Toast } from "primereact/toast";
 import localFont from "@next/font/local";
 import MyHead from "../components/MyHead";
-import Footer from "../components/Layouts/Footer";
 import { GLOBAL_STYLES } from "../lib/fixed";
 import { MyToast, ToastContext } from "../components/MyToast";
 
@@ -80,7 +79,6 @@ export default function App({
           ) : (
             <MyLayout>{ComponentToUse}</MyLayout>
           )}
-          <Footer />
         </main>
       </SWRConfig>
     </SessionProvider>
