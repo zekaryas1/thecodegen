@@ -52,9 +52,13 @@ export class EntitiesUtils {
     projectId: string;
     onSuccess: () => void;
   }) => {
-    const res = await ColumnService.create(input.data, input.projectId);
-    if (res.statusText === "OK") {
-      input.onSuccess();
+    try {
+      const res = await ColumnService.create(input.data, input.projectId);
+      if (res.statusText === "OK") {
+        input.onSuccess();
+      }
+    } catch (e) {
+      console.log(e);
     }
   };
 

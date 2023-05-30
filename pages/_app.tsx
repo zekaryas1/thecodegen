@@ -56,7 +56,7 @@ export default function App({
       toast.current.show({
         severity: "error",
         summary: "Error",
-        detail: `Something went wrong - ${error.message}`,
+        detail: `Something went wrong - ${error.message}: is DB working?`,
         life: 3000,
       });
     }
