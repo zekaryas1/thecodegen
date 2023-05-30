@@ -92,7 +92,7 @@ function Entities() {
   };
 
   const addNewConstraint = (edgeData: EdgeType, onSuccess: () => void) => {
-    const entity = entities.find(
+    const entity = entities?.data?.find(
       (entity: Entity) => entity.id === edgeData.source
     );
     const updatedColumn = EntitiesUtils.getNewColumnForEntity(edgeData, entity);
@@ -106,29 +106,27 @@ function Entities() {
 
   return (
     <>
-      <AdminOrOwner>
-        <EntitiesToolBar
-          currentEntity={selectedEntity}
-          onAddClick={() => {
-            setManageDialogData({});
-            setShowEntityDialog(true);
-          }}
-          onManageClick={() => {
-            setManageDialogData(selectedEntity);
-            setShowEntityDialog(true);
-          }}
-          onUpdateColumnsClick={() => {
-            setEditColumnsDialogData(selectedEntity);
-            setShowColumnsDialog(true);
-          }}
-          viewOptions={["json", "diagram"]}
-          currentViewValue={currentViewOption}
-          onViewChange={(newView) => {
-            setCurrentViewOption(newView);
-          }}
-        />
-        <Divider />
-      </AdminOrOwner>
+      <EntitiesToolBar
+        currentEntity={selectedEntity}
+        onAddClick={() => {
+          setManageDialogData({});
+          setShowEntityDialog(true);
+        }}
+        onManageClick={() => {
+          setManageDialogData(selectedEntity);
+          setShowEntityDialog(true);
+        }}
+        onUpdateColumnsClick={() => {
+          setEditColumnsDialogData(selectedEntity);
+          setShowColumnsDialog(true);
+        }}
+        viewOptions={["json", "diagram"]}
+        currentViewValue={currentViewOption}
+        onViewChange={(newView) => {
+          setCurrentViewOption(newView);
+        }}
+      />
+      <Divider />
 
       <div className="grid min-h-screen mb-4">
         <div className="col-2 pr-0">
