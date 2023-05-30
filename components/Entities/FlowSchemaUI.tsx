@@ -58,7 +58,10 @@ function ROW({
         id={`${entityName}.${column.name}.s`}
         style={{ top: 42.5 * index + 75 }}
       />
-      <p>
+      <p
+        title={`${column.name} - ${column.type}`}
+        className="white-space-nowrap overflow-hidden text-overflow-ellipsis"
+      >
         {column.name} - {column.type}
       </p>
       <Handle
