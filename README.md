@@ -31,6 +31,7 @@
 - [React-markdown](https://github.com/remarkjs/react-markdown) for Markdown support with
   - [remark-gfm plugin](https://github.com/remarkjs/remark-gfm) to support GFM (autolink literals, footnotes, strikethrough, tables, tasklists)
   - [github-markdown-css](https://github.com/sindresorhus/github-markdown-css) to replicate the GitHub Markdown style
+- [React flow](https://reactflow.dev/) for node-based editors and interactive diagrams
 - [PrimeReact](https://primereact.org/) for UI
 - [Prisma](https://www.prisma.io/) for DB ORM
 - [Vercel](Vercel.com) for deployment
