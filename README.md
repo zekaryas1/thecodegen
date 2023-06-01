@@ -51,11 +51,11 @@ NEXTAUTH_SECRET=${random base64 value i.e openssl rand -base64 32}
 ```
 # optional env variables
 NEXT_PUBLIC_PROJECT_NAME=${Project name, "The Codegen"}
-NEXT_PUBLIC_PROJECT_DESCRIPTION_MAX_LENGTH=${Length, 80}
+NEXT_PUBLIC_PROJECT_DESCRIPTION_MAX_LENGTH=${New project description Length, 80}
 ```
 
 ```
-# update schema.prisma file to
+# update datasource in schema.prisma file to
 datasource db {
   provider = "postgresql"
   url = env("DATABASE_URL") 
@@ -111,7 +111,7 @@ prisma generate
 #to automatically generates SQL migration files and apply them to the database
 npx prisma migrate dev --name migration_name
 
-#to format and let prisma generate relation
+#to format and let prisma generate relation for you
 prisma format
 ```
 
