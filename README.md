@@ -1,7 +1,7 @@
 # The Codegen
 
-- ![project screenshot apr 24, 2023](Screenshot.png)
-- ![project screenshot may 29, 2023](db-diagram.png)
+- ![project screenshot apr 24, 2023](screenshots/image1.png)
+- ![project screenshot may 29, 2023](screenshots/image2.png)
 - [🎥 A short video of using this app to create node.js MVC based crud files](https://drive.google.com/file/d/1GYLT_dNrmJN0VHL3i5qobWuZpu_toDZB/view?usp=sharing)
 
 - [The Codegen](#the-codegen)
