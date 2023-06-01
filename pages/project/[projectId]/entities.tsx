@@ -51,7 +51,7 @@ function Entities() {
       entity: entity,
       onSuccessfulCreate(response: Entity) {
         setSelectedEntity(response);
-        refreshEntities({ ...entities, response });
+        refreshEntities();
       },
       onSuccessfulUpdate() {
         refreshEntities();
@@ -64,9 +64,7 @@ function Entities() {
       projectId: projectId as string,
       id: id,
       onSuccess() {
-        refreshEntities({
-          ...entities.data.filter((it: Entity) => it.id !== id),
-        });
+        refreshEntities();
       },
     });
   };

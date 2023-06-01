@@ -57,7 +57,7 @@ function Codes() {
       newGenerator: newGenerator,
       projectId: projectId as string,
       onSuccessfulCreate(newEntity) {
-        refreshGenerators({ ...generators, response: newEntity });
+        refreshGenerators();
       },
       onSuccessfulUpdate() {
         refreshGenerators();
@@ -111,9 +111,7 @@ function Codes() {
       projectId: projectId as string,
       onSuccess(result) {
         setSelectedGenerator({});
-        refreshGenerators({
-          ...generators.data.filter((it: Generator) => it.id != id),
-        });
+        refreshGenerators();
       },
     });
   };
