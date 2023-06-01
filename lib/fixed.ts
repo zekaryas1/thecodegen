@@ -39,8 +39,8 @@ export const DEFAULT_TEMPLATE = `[//]: # "markdown"
 - To write a markdown start your template with
     - \`[//]: # "markdown"\` just like this template
 - To write a template code
-    - you have to follow [liquid syntax](https://shopify.github.io/liquid/)
-    - here is an output of template code example
+    - you have to follow [liquidjs syntax](https://liquidjs.com/tutorials/intro-to-liquid.html)
+    - here is a starter code using liquid js template
 
 \`\`\`
 Entity = {{ name | upcase }}
