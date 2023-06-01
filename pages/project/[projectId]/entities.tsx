@@ -8,7 +8,6 @@ import EditColumnsDialog from "../../../components/Entities/EditColumnsDialog";
 import ManageEntityDialog from "../../../components/Entities/ManageEntityDialog";
 import EntityListComponent from "../../../components/Entities/EntityList";
 import { LoadingIndicator } from "../../../components/LoadingIndicator";
-import AdminOrOwner from "../../../components/AdminOrOwner";
 import EntitiesToolBar from "../../../components/Entities/EntitiesToolBar";
 import MyEditor from "../../../components/MyEditor";
 import { Divider } from "primereact/divider";

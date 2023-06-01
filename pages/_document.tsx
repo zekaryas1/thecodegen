@@ -1,5 +1,4 @@
 import { Html, Main, Head, NextScript } from "next/document";
-import { PROJECT_NAME } from "../lib/fixed";
 
 export default function Document() {
   return (

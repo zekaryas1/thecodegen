@@ -13,7 +13,7 @@ import MyLayout from "../components/Layouts/MyLayout";
 import { Toast } from "primereact/toast";
 import localFont from "@next/font/local";
 import MyHead from "../components/MyHead";
-import { GLOBAL_STYLES } from "../lib/fixed";
+import { GLOBAL_STYLES, REQUEST_REFRESH_INTERVAL } from "../lib/fixed";
 import { MyToast, ToastContext } from "../components/MyToast";
 
 const myFont = localFont({ src: "./fonts/Dank Mono Regular.otf" });
@@ -64,6 +64,7 @@ export default function App({
 
   const SWROption = {
     onError: onError,
+    refreshInterval: REQUEST_REFRESH_INTERVAL,
     fetcher: (url: string) => axios.get(url).then((res) => res.data),
   };
 

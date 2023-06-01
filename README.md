@@ -52,6 +52,7 @@ NEXTAUTH_SECRET=${random base64 value i.e openssl rand -base64 32}
 # optional env variables
 NEXT_PUBLIC_PROJECT_NAME=${Project name, "The Codegen"}
 NEXT_PUBLIC_PROJECT_DESCRIPTION_MAX_LENGTH=${New project description Length, 80}
+NEXT_PUBLIC_REQUEST_REFRESH_INTERVAL=${value for SWR to refresh every n millisecond, 1000(1sec)}
 ```
 
 ```

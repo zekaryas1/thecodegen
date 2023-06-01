@@ -9,6 +9,9 @@ export const PROJECT_NAME =
 export const PROJECT_DESCRIPTION_MAX_LENGTH = parseInt(
   process.env.NEXT_PUBLIC_PROJECT_DESCRIPTION_MAX_LENGTH || "80"
 );
+export const REQUEST_REFRESH_INTERVAL = parseInt(
+  process.env.NEXT_PUBLIC_REQUEST_REFRESH_INTERVAL || "1000"
+);
 
 export const STATUS_COLORS: Record<string, string> = {
   pending: "text-yellow-700",
@@ -134,10 +137,8 @@ export const DESTINATIONS = {
   ],
 };
 
-
 export const RECENT_PROJECTS_STORAGE_KEY = "recentProjects";
 
 export const MAX_NO_OF_RECENT_PROJECTS = 7;
-
 
 export const FLOW_KEY = "flow_key";
