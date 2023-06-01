@@ -24,7 +24,7 @@ function AdminOrOwner({ children }: IsAdminProps): JSX.Element | null {
     error,
   } = useSWR(MemberService.myInfo(projectId));
 
-  if (isLoading || error) {
+  if (isLoading || error || !userInfo || !userInfo.data) {
     return null;
   }
 

@@ -5,9 +5,9 @@ import Link from "next/link";
 import Image from "next/image";
 import { title } from "process";
 import { DESTINATIONS, GLOBAL_STYLES, PROJECT_NAME } from "../lib/fixed";
-import Head from "next/head";
 import { useSession } from "next-auth/react";
 import Conditional from "../components/Conditional";
+import Footer from "../components/Layouts/Footer";
 
 function Home() {
   const { data: session } = useSession();
@@ -159,7 +159,12 @@ function Home() {
 }
 
 Home.getLayout = function PageLayout(page: ReactElement) {
-  return <>{page}</>;
+  return (
+    <>
+      {page}
+      <Footer />
+    </>
+  );
 };
 
 export default Home;

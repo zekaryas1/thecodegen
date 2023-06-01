@@ -13,6 +13,9 @@ import EntitiesToolBar from "../../../components/Entities/EntitiesToolBar";
 import MyEditor from "../../../components/MyEditor";
 import { Divider } from "primereact/divider";
 import { EntitiesUtils } from "../../../components/Entities/EntitiesUtils";
+import Flow, { EdgeType } from "../../../components/Entities/Flow";
+import { ReactFlowProvider } from "reactflow";
+import Conditional from "../../../components/Conditional";
 
 function Entities() {
   const router = useRouter();
@@ -31,6 +34,8 @@ function Entities() {
   const [showColumnsDialog, setShowColumnsDialog] = useState(false);
   const [showEntityDialog, setShowEntityDialog] = useState(false);
 
+  const [currentViewOption, setCurrentViewOption] = useState("json");
+
   useEffect(() => {
     setSelectedEntity((prevState) => {
       const res = entities?.data?.find(
@@ -46,7 +51,7 @@ function Entities() {
       entity: entity,
       onSuccessfulCreate(response: Entity) {
         setSelectedEntity(response);
-        refreshEntities({ ...entities, response });
+        refreshEntities();
       },
       onSuccessfulUpdate() {
         refreshEntities();
@@ -59,9 +64,7 @@ function Entities() {
       projectId: projectId as string,
       id: id,
       onSuccess() {
-        refreshEntities({
-          ...entities.data.filter((it: Entity) => it.id !== id),
-        });
+        refreshEntities();
       },
     });
   };
@@ -76,7 +79,7 @@ function Entities() {
     });
   };
 
-  const addNewColumn = async (data: Column) => {
+  const addNewColumn = (data: Column) => {
     EntitiesUtils.addNewColumn({
       projectId: projectId as string,
       data: data,
@@ -86,30 +89,42 @@ function Entities() {
     });
   };
 
+  const addNewConstraint = (edgeData: EdgeType, onSuccess: () => void) => {
+    const entity = entities?.data?.find(
+      (entity: Entity) => entity.id === edgeData.source
+    );
+    const updatedColumn = EntitiesUtils.getNewColumnForEntity(edgeData, entity);
+    addNewColumn(updatedColumn);
+    onSuccess();
+  };
+
   if (isLoading) {
     return <LoadingIndicator />;
   }
 
   return (
     <>
-      <AdminOrOwner>
-        <EntitiesToolBar
-          currentEntity={selectedEntity}
-          onAddClick={() => {
-            setManageDialogData({});
-            setShowEntityDialog(true);
-          }}
-          onManageClick={() => {
-            setManageDialogData(selectedEntity);
-            setShowEntityDialog(true);
-          }}
-          onUpdateColumnsClick={() => {
-            setEditColumnsDialogData(selectedEntity);
-            setShowColumnsDialog(true);
-          }}
-        />
-        <Divider />
-      </AdminOrOwner>
+      <EntitiesToolBar
+        currentEntity={selectedEntity}
+        onAddClick={() => {
+          setManageDialogData({});
+          setShowEntityDialog(true);
+        }}
+        onManageClick={() => {
+          setManageDialogData(selectedEntity);
+          setShowEntityDialog(true);
+        }}
+        onUpdateColumnsClick={() => {
+          setEditColumnsDialogData(selectedEntity);
+          setShowColumnsDialog(true);
+        }}
+        viewOptions={["json", "diagram"]}
+        currentViewValue={currentViewOption}
+        onViewChange={(newView) => {
+          setCurrentViewOption(newView);
+        }}
+      />
+      <Divider />
 
       <div className="grid min-h-screen mb-4">
         <div className="col-2 pr-0">
@@ -121,10 +136,24 @@ function Entities() {
         </div>
 
         <div className="col pl-0">
-          <MyEditor
-            height="100%"
-            defaultLanguage="json"
-            defaultValue={entityToString(selectedEntity)}
+          <Conditional
+            if={currentViewOption === "diagram"}
+            show={
+              <ReactFlowProvider>
+                <Flow
+                  nodes={EntitiesUtils.generateNodes(entities.data)}
+                  edges={EntitiesUtils.generateEdges(entities.data)}
+                  onEdgeConnection={addNewConstraint}
+                />
+              </ReactFlowProvider>
+            }
+            else={
+              <MyEditor
+                height="100%"
+                defaultLanguage="json"
+                defaultValue={entityToString(selectedEntity)}
+              />
+            }
           />
         </div>
       </div>

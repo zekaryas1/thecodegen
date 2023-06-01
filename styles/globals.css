@@ -5,8 +5,9 @@
   font-family: "Dank Mono", serif;
 }
 
-.monaco-editor { position: absolute !important; }
-
+.monaco-editor {
+  position: absolute !important;
+}
 
 .p-listbox-item {
   padding: 0 !important;
@@ -14,4 +15,12 @@
 
 .p-menu .p-submenu-header {
   padding: 0px !important;
+}
+
+.react-flow__edge.selected,
+.react-flow__edge:focus,
+.react-flow__edge:focus-visible {
+  outline: none;
+  filter: invert(7%) sepia(100%) saturate(7055%) hue-rotate(241deg)
+    brightness(132%) contrast(118%);
 }

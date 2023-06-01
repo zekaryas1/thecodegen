@@ -1,6 +1,6 @@
 # The Codegen
 
-- ![project screenshot apr 24, 2023](Screenshot.png)
+- ![project screenshot apr 24, 2023](screenshots/Group%2035.png)
 - [🎥 A short video of using this app to create node.js MVC based crud files](https://drive.google.com/file/d/1GYLT_dNrmJN0VHL3i5qobWuZpu_toDZB/view?usp=sharing)
 
 - [The Codegen](#the-codegen)
@@ -30,6 +30,7 @@
 - [React-markdown](https://github.com/remarkjs/react-markdown) for Markdown support with
   - [remark-gfm plugin](https://github.com/remarkjs/remark-gfm) to support GFM (autolink literals, footnotes, strikethrough, tables, tasklists)
   - [github-markdown-css](https://github.com/sindresorhus/github-markdown-css) to replicate the GitHub Markdown style
+- [React flow](https://reactflow.dev/) for node-based editors and interactive diagrams
 - [PrimeReact](https://primereact.org/) for UI
 - [Prisma](https://www.prisma.io/) for DB ORM
 - [Vercel](Vercel.com) for deployment
@@ -50,11 +51,11 @@ NEXTAUTH_SECRET=${random base64 value i.e openssl rand -base64 32}
 ```
 # optional env variables
 NEXT_PUBLIC_PROJECT_NAME=${Project name, "The Codegen"}
-NEXT_PUBLIC_PROJECT_DESCRIPTION_MAX_LENGTH=${Length, 80}
+NEXT_PUBLIC_PROJECT_DESCRIPTION_MAX_LENGTH=${New project description Length, 80}
 ```
 
 ```
-# update schema.prisma file to
+# update datasource in schema.prisma file to
 datasource db {
   provider = "postgresql"
   url = env("DATABASE_URL") 
@@ -110,7 +111,7 @@ prisma generate
 #to automatically generates SQL migration files and apply them to the database
 npx prisma migrate dev --name migration_name
 
-#to format and let prisma generate relation
+#to format and let prisma generate relation for you
 prisma format
 ```
 

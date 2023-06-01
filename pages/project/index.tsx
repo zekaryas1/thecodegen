@@ -49,7 +49,7 @@ const Projects: NextPageWithLayout = () => {
         if (response.id) {
           ProjectUtils.saveToRecentProjects(response.id);
         }
-        refreshProjects({ ...projects, response });
+        refreshProjects();
       },
       onSuccessfulUpdate(response) {
         refreshProjects();
@@ -61,9 +61,7 @@ const Projects: NextPageWithLayout = () => {
     ProjectUtils.deleteProject({
       id: id,
       onSuccess() {
-        refreshProjects({
-          ...projects.data.filter((it: Project) => it.id !== id),
-        });
+        refreshProjects();
       },
     });
   };

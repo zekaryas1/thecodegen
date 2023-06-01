@@ -37,7 +37,7 @@ function Members() {
       newMembersEmail: email,
       projectId: projectId as string,
       onSuccess(response) {
-        refreshMembers({ ...members, response });
+        refreshMembers();
       },
     });
   };
