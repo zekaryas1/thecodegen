@@ -26,6 +26,9 @@ export default async function handler(
         project: {
           select: {
             generator: {
+              orderBy: {
+                createdAt: "desc",
+              },
               include: {
                 template: true,
               },

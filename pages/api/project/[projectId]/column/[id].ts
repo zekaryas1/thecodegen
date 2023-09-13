@@ -21,7 +21,11 @@ export default async function handler(
           id: id as string,
         },
         include: {
-          constraint: true,
+          constraint: {
+            orderBy: {
+              createdAt: "desc",
+            },
+          },
         },
       });
       return res.status(200).json({ data: column });

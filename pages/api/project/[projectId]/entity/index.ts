@@ -25,10 +25,20 @@ export default async function handler(
         project: {
           select: {
             entity: {
+              orderBy: {
+                createdAt: "desc",
+              },
               include: {
                 columns: {
+                  orderBy: {
+                    createdAt: "desc",
+                  },
                   include: {
-                    constraint: true,
+                    constraint: {
+                      orderBy: {
+                        createdAt: "desc",
+                      },
+                    },
                   },
                 },
               },

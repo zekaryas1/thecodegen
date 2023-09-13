@@ -27,8 +27,15 @@ export default async function handler(
             entity: {
               include: {
                 columns: {
+                  orderBy: {
+                    createdAt: "desc",
+                  },
                   include: {
-                    constraint: true,
+                    constraint: {
+                      orderBy: {
+                        createdAt: "desc",
+                      },
+                    },
                   },
                 },
               },

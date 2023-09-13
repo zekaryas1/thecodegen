@@ -19,6 +19,11 @@ export default async function handler(
       select: {
         project: true,
       },
+      orderBy: {
+        project: {
+          createdAt: "desc",
+        },
+      },
     });
 
     return res.status(200).json({

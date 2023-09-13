@@ -24,6 +24,9 @@ export default async function handler(
         where: {
           projectId: projectId as string,
         },
+        orderBy: {
+          createdAt: "desc",
+        }
       });
       return res.status(HttpStatusCode.Ok).json({ data: members });
     }
