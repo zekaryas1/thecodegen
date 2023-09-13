@@ -56,7 +56,7 @@ NEXT_PUBLIC_REQUEST_REFRESH_INTERVAL=${value for SWR to refresh every n millisec
 ```
 
 ```
-# update datasource in schema.prisma file to
+# update datasource section in schema.prisma file to
 datasource db {
   provider = "postgresql"
   url = env("DATABASE_URL") 
