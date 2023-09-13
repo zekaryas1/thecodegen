@@ -33,18 +33,28 @@ function EditColumnsDialog({
     };
   };
 
-  const removeAndAddNewConstraint = useCallback(
+  const updateOrAddConstraint = useCallback(
     (newConstraint: ConstraintType) => {
-      const prevConstraints = (selectedColumn.constraint || []).filter(
-        (it) => it.id != newConstraint.id
-      );
-
-      setSelectedColumn({
-        ...selectedColumn,
-        constraint: [newConstraint, ...prevConstraints],
-      });
+      //if newConstraint is in setSelectedColumn update it else add
+      if (selectedColumn.constraint?.find((it) => it.id === newConstraint.id)) {
+        setSelectedColumn((preState) => {
+          return {
+            ...preState,
+            constraint: preState.constraint?.map((it) => {
+              return it.id === newConstraint.id ? newConstraint : it;
+            }),
+          };
+        });
+      } else {
+        setSelectedColumn((preState) => {
+          return {
+            ...preState,
+            constraint: [newConstraint, ...(preState.constraint || [])],
+          };
+        });
+      }
     },
-    [selectedColumn]
+    [selectedColumn.constraint]
   );
 
   const submitForm = (event: React.FormEvent<HTMLFormElement>) => {
@@ -128,12 +138,12 @@ function EditColumnsDialog({
 
         <TrackedConstraints
           constraints={selectedColumn.constraint || []}
-          onChangeClick={removeAndAddNewConstraint}
+          onChangeClick={updateOrAddConstraint}
         />
 
         <DraftConstraints
           constraints={selectedColumn.constraint || []}
-          onChangeClick={removeAndAddNewConstraint}
+          onChangeClick={updateOrAddConstraint}
         />
 
         <div className="flex">
@@ -142,7 +152,7 @@ function EditColumnsDialog({
             type="button"
             className="p-button-outlined p-button-secondary"
             icon="pi pi-plus"
-            onClick={() => removeAndAddNewConstraint(getNewConstraint())}
+            onClick={() => updateOrAddConstraint(getNewConstraint())}
           />
         </div>
 
